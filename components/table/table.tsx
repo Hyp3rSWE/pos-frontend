@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState , useRef , useEffect} from "react";
 import { clsx } from 'clsx';
+import MybuttonSearch from '../buttonSearch/buttonSearch';
 
 interface ProductRow {
   code: string;
@@ -10,13 +11,34 @@ interface ProductRow {
 
 
 const ProductTable: React.FC = () => {
+
+  //later on this will be changed
+  const specialCodesProducts: ProductRow[] = [
+    { code: "1", product: "Bread", quantity: 10, unitPrice: 1.5 },
+    { code: "2", product: "Eggs", quantity: 12, unitPrice: 0.2 },
+    { code: "3", product: "Milk", quantity: 8, unitPrice: 1.2 },
+    { code: "4", product: "Apples", quantity: 15, unitPrice: 0.5 },
+    { code: "5", product: "Potatoes", quantity: 20, unitPrice: 0.3 }
+  ];
+
+  //the rows gets updated after reading value from scanner
+  //or using "ajouter un produit"
   const [rows, setRows] = useState<ProductRow[]>([
     { code: "12345678910", product: "Thon", quantity: 12, unitPrice: 100 },
     { code: "12345678910", product: "Thon", quantity: 12, unitPrice: 100 },
   ]);
 
+  const lastInputQuantityRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (lastInputQuantityRef.current) {
+      lastInputQuantityRef.current.focus(); // Focus the last input
+      lastInputQuantityRef.current.select(); //Focusing on the text of the last input
+    }
+  }, [rows]); 
 
 
+  //add using arrows to increment and decrement quickly
   const handleQuantityChange = (index: number, value: number) => {
     const updatedRows = [...rows];
     updatedRows[index].quantity = value;
@@ -24,17 +46,34 @@ const ProductTable: React.FC = () => {
   };
 
 
-
   const handleDeleteRow = (index: number) => {
     const updatedRows = rows.filter((_, i) => i !== index);
     setRows(updatedRows);
   };
 
+  //looking for the product in the "special codes to add it"
+
+  const handleAddProduct = (productCode: string) => {
+    console.log("Product added:", productCode);
+    const newrow : ProductRow | undefined = specialCodesProducts.find(product => product.code === productCode);
+    const updateRows = [...rows]
+    if (newrow !== undefined) {
+      updateRows.push(newrow);
+      setRows(updateRows);
+    }
+    
+  };
+
+  
   const totalAmount = rows.reduce((sum, row) => sum + row.quantity * row.unitPrice, 0);
+
 
   return (
     <div className="p-4">
 
+        {
+          //the total text field
+        }
         <div className="flex justify-end items-center mb-4">
          <span className="text-6xl font-bold mr-10">Totale:</span>
          <span className="text-6xl font-bold bg-[#BEE7DB] text-black px-4 py-2 rounded-2xl">
@@ -42,7 +81,23 @@ const ProductTable: React.FC = () => {
          </span>
         </div>
 
+
+        {
+          //the ajouter un produit manually field
+        }
+        <div className="flex justify-end w-full">
+        <MybuttonSearch
+        textValue=""
+        buttonText="Ajouter"
+        placeholderText="Ajouter le code de produit"
+        onButtonClick={handleAddProduct}
+      />
+        </div>
+
+        <br></br>
+
       <table className="table-auto w-full">
+
         <thead className="bg-[#BEE7DB]">
           <tr className="">
             <th className="px-4 py-2 rounded-tl-3xl rounded-bl-3xl">Code</th>
@@ -53,29 +108,63 @@ const ProductTable: React.FC = () => {
             <th className="px-4 py-2 rounded-tr-3xl rounded-br-3xl">Actions</th>
           </tr>
         </thead>
+
         <br></br>
 
         <tbody className="">
 
           {rows.map((row, index) => (
+
+
             <tr key={index} className="text-center">
+
+              {
+                //code
+              }
               <td className={clsx(
                 "bg-[#EBEBEB] px-4 py-2",
                 index === 0 ? "rounded-tl-2xl" : "",
                 index === rows.length - 1 ? "rounded-bl-2xl" : ""
               )}
               >{row.code}</td>
+
+              {
+                //product
+              }
               <td className="bg-[#EBEBEB]  px-4 py-2">{row.product}</td>
-              <td className="bg-[#EBEBEB]  px-4 py-2">
+
+
+              {
+                //quantity
+              }
+              <td className= {clsx("bg-[#EBEBEB]  px-4 py-2",
+                  index == rows.length - 1 ? "bg-[#BEE7DB]" : ""
+                )}>
                 <input
+                  ref = {index == rows.length - 1 ? lastInputQuantityRef : null}
                   type="number"
                   value={row.quantity}
                   onChange={(e) => handleQuantityChange(index, parseInt(e.target.value) || 0)}
-                  className="w-16 p-1 border rounded"
+                  className={clsx("w-16 p-1 border rounded",
+                    index == rows.length - 1 ? "bg-[#BEE7DB]" : ""
+                  )}
                 />
               </td>
+
+              {
+                //unit proce
+              }
               <td className="bg-[#EBEBEB]  px-4 py-2">{row.unitPrice}</td>
+
+              {
+                //total of product
+              }
+
               <td className="bg-[#EBEBEB]  px-4 py-2">{row.quantity * row.unitPrice}</td>
+
+              {
+                //delete button add the ability to use a shorcut
+              }
               <td className={clsx(
                 "bg-[#EBEBEB] px-4 py-2",
                 index === 0 ? "rounded-tr-2xl" : "",
@@ -88,6 +177,8 @@ const ProductTable: React.FC = () => {
                   🗑️
                 </button>
               </td>
+
+
             </tr>
           ))}
 
@@ -97,7 +188,7 @@ const ProductTable: React.FC = () => {
       </table>
       <div className="flex justify-between items-center mt-4">
         <span className="text-lg font-bold">Total: {totalAmount.toFixed(2)}</span>
-        <button className="bg-[#BEE7DB] hover:bg-[#5CC3A4] px-4 py-2 rounded-2xl">Valider</button>
+        <button className="bg-[#BEE7DB] hover:bg-[#5CC3A4] px-4 py-2 rounded-2xl focus:outline-none focus:ring-2 focus:ring-offset-1">Valider</button>
       </div>
     </div>
   );
