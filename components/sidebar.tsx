@@ -9,7 +9,7 @@ import Link from 'next/link';
 import { clsx } from 'clsx';
 import { usePathname } from "next/navigation";
 
-const Sidebar: React.FC = () => {
+const Sidebar: React.FC = () => { 
   const pathname = usePathname();
 
   return (
