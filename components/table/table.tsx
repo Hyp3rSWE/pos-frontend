@@ -1,6 +1,7 @@
 import React, { useState , useRef , useEffect} from "react";
 import { clsx } from 'clsx';
 import MybuttonSearch from '../buttonSearch/buttonSearch';
+import { TiDelete } from "react-icons/ti";
 
 interface ProductRow {
   code: string;
@@ -34,6 +35,7 @@ const ProductTable: React.FC = () => {
     if (lastInputQuantityRef.current) {
       lastInputQuantityRef.current.focus(); // Focus the last input
       lastInputQuantityRef.current.select(); //Focusing on the text of the last input
+
     }
   }, [rows]); 
 
@@ -57,10 +59,17 @@ const ProductTable: React.FC = () => {
     console.log("Product added:", productCode);
     const newrow : ProductRow | undefined = specialCodesProducts.find(product => product.code === productCode);
     const updateRows = [...rows]
-    if (newrow !== undefined) {
-      updateRows.push(newrow);
-      setRows(updateRows);
+    //if item already exists
+    const item = updateRows.find(product => product.code === productCode)
+    if(item === undefined){
+      if (newrow !== undefined) {
+        updateRows.push(newrow);
+      }
     }
+    else{
+      item.quantity += 1;
+    }
+    setRows(updateRows);
     
   };
 
@@ -145,8 +154,8 @@ const ProductTable: React.FC = () => {
                   type="number"
                   value={row.quantity}
                   onChange={(e) => handleQuantityChange(index, parseInt(e.target.value) || 0)}
-                  className={clsx("w-16 p-1 border rounded",
-                    index == rows.length - 1 ? "bg-[#BEE7DB]" : ""
+                  className={clsx("w-16 p-1 border rounded focus:bg-[#BEE7DB]",
+                    index == rows.length - 1 ? "" : ""
                   )}
                 />
               </td>
@@ -174,7 +183,7 @@ const ProductTable: React.FC = () => {
                   onClick={() => handleDeleteRow(index)}
                   className="text-white px-2 py-1 rounded"
                 >
-                  🗑️
+                  <TiDelete className="text-red-500 text-3xl hover:text-red-800"></TiDelete>
                 </button>
               </td>
 
@@ -186,8 +195,7 @@ const ProductTable: React.FC = () => {
           
         </tbody>
       </table>
-      <div className="flex justify-between items-center mt-4">
-        <span className="text-lg font-bold">Total: {totalAmount.toFixed(2)}</span>
+      <div className="flex justify-end items-center mt-4">
         <button className="bg-[#BEE7DB] hover:bg-[#5CC3A4] px-4 py-2 rounded-2xl focus:outline-none focus:ring-2 focus:ring-offset-1">Valider</button>
       </div>
     </div>
