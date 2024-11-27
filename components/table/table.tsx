@@ -13,7 +13,7 @@ interface ProductRow {
 
 const ProductTable: React.FC = () => {
 
-  //later on this will be changed
+  //later on this will be changed 
   const specialCodesProducts: ProductRow[] = [
     { code: "1", product: "Bread", quantity: 10, unitPrice: 1.5 },
     { code: "2", product: "Eggs", quantity: 12, unitPrice: 0.2 },
