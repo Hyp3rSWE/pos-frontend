@@ -34,8 +34,6 @@ const ProductTable: React.FC = () => {
   useEffect(() => {
     if (lastInputQuantityRef.current) {
       lastInputQuantityRef.current.focus(); // Focus the last input
-      lastInputQuantityRef.current.select(); //Focusing on the text of the last input
-
     }
   }, [rows]); 
 
@@ -195,6 +193,7 @@ const ProductTable: React.FC = () => {
           
         </tbody>
       </table>
+
       <div className="flex justify-end items-center mt-4">
         <button className="bg-[#BEE7DB] hover:bg-[#5CC3A4] px-4 py-2 rounded-2xl focus:outline-none focus:ring-2 focus:ring-offset-1">Valider</button>
       </div>
