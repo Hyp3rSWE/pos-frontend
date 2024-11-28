@@ -13,7 +13,7 @@ interface ProductRow {
 
 const ProductTable: React.FC = () => {
 
-  //later on this will be changed use the endpoint...
+  //later on this will be changed use the endpoint... GET THE DATA
   const specialCodesProducts: ProductRow[] = [
     { code: "1", product: "Bread", quantity: 10, unitPrice: 1.5 },
     { code: "2", product: "Eggs", quantity: 12, unitPrice: 0.2 },
@@ -38,22 +38,24 @@ const ProductTable: React.FC = () => {
   ];
 
   //the rows gets updated after reading value from scanner
-  //or using "ajouter un produit"
+  //or using "ajouter un produit" INITIALLY EMPTY
   const [rows, setRows] = useState<ProductRow[]>([
     { code: "12345678910", product: "Thon", quantity: 12, unitPrice: 100 },
     { code: "12345678910", product: "Thon", quantity: 12, unitPrice: 100 },
   ]);
 
-  const lastInputQuantityRef = useRef<HTMLInputElement>(null);
+  const [coloredInputIndex, setColoredIndex] = useState<number>(rows.length);
+
+  const changedInputQuantityRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (lastInputQuantityRef.current) {
-      lastInputQuantityRef.current.focus(); // Focus the last input
+    if (changedInputQuantityRef.current) {
+      changedInputQuantityRef.current.focus(); // Focus the last input
     }
   }, [rows]); 
 
 
-  //add using arrows to increment and decrement quickly
+
   const handleQuantityChange = (index: number, value: number) => {
     const updatedRows = [...rows];
     updatedRows[index].quantity = value;
@@ -69,20 +71,23 @@ const ProductTable: React.FC = () => {
   //looking for the product in the "special codes to add it"
 
   const handleAddProduct = (productCode: string) => {
-    console.log("Product added:", productCode);
     const newrow : ProductRow | undefined = specialCodesProducts.find(product => product.code === productCode);
     const updateRows = [...rows]
     //if item already exists
     const item = updateRows.find(product => product.code === productCode)
+    const index = updateRows.findIndex(product => product.code === productCode)
     if(item === undefined){
       if (newrow !== undefined) {
         updateRows.push(newrow);
+        setColoredIndex(rows.length);
       }
     }
     else{
       item.quantity += 1;
+      setColoredIndex(index);
     }
     setRows(updateRows);
+    
     
   };
 
@@ -166,7 +171,7 @@ const ProductTable: React.FC = () => {
                   index == rows.length - 1 ? "bg-[#BEE7DB]" : ""
                 )}>
                 <input
-                  ref = {index == rows.length - 1 ? lastInputQuantityRef : null}
+                  ref = {index == coloredInputIndex ? changedInputQuantityRef : null}
                   type="number"
                   value={row.quantity}
                   onChange={(e) => handleQuantityChange(index, parseInt(e.target.value) || 0)}

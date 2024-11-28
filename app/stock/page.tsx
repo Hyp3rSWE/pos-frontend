@@ -11,7 +11,7 @@ const Home: React.FC = () => {
   ];
 
   return (
-    <div className="flex justify-center items-center h-screen">
+    <div className="flex justify-center h-screen">
       <MySidebar />
       <div className="ml-48 w-full"><Tabs tabs={tabs}/></div>
     </div>

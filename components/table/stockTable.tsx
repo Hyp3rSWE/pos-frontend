@@ -59,6 +59,21 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
     setRows(updatedRows);
   };
 
+  const filterReptureStock = () => {
+    
+    const updatedRows = specialCodesProducts.filter(product => product.quantity < 10);
+    setRows(updatedRows);
+  }
+
+  const filterThresholdStock = () => {
+    const updatedRows = specialCodesProducts.filter(product => product.quantity == 0);
+    setRows(updatedRows);
+  }
+  const NoFilterStock = () => {
+    const updatedRows = specialCodesProducts;
+    setRows(updatedRows);
+  }
+
   //looking for the product in the "special codes to add it"
   //change that one... 
   const handleAddProduct = (productCode: string) => {
@@ -100,7 +115,21 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
             className={`relative pb-2 text-lg font-medium ${
               activeTab === index ? "text-blue-900" : "text-gray-500"
             }`}
-            onClick={() => setActiveTab(index)}
+            onClick={() => {setActiveTab(index)
+                console.log(index);
+                if(index == 1){
+                    filterReptureStock();
+                }
+                else if(index == 2){
+                    filterThresholdStock();
+                }
+                else{
+                    NoFilterStock();
+                }
+
+            }
+          
+            }
           >
             {tab.label}
             {activeTab === index && (
