@@ -1,17 +1,23 @@
 "use client"
+import React from "react";
+import Tabs from "../../components/table/stockTable";
 import MySidebar from "../../components/sidebar";
-import AppTable from "@/components/table/table";
 
-export default function Stock() {
-    return (
-      <div className="flex-col justify-center items-center h-full w-full">
-        <MySidebar />
-        <div className="ml-48 p-4"><AppTable/></div>
-        
-        
+const Home: React.FC = () => {
+  const tabs = [
+    { label: "Tout", content: <div>All content displayed here</div> },
+    { label: "Rupture stock", content: <div>Out of stock content displayed here</div> },
+    { label: "Under threshold", content: <div>Low stock content displayed here</div> },
+  ];
 
-        <h1>This is the stock page!!</h1>
-      </div>
-    );
-  }
+  return (
+    <div className="flex justify-center items-center h-screen">
+      <MySidebar />
+      <div className="ml-48 w-full"><Tabs tabs={tabs}/></div>
+    </div>
+  );
+};
+
+export default Home;
+
   
