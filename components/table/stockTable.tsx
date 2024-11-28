@@ -76,23 +76,16 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
 
   //looking for the product in the "special codes to add it"
   //change that one... 
-  const handleAddProduct = (productCode: string) => {
-    console.log("Product added:", productCode);
-    const newrow : ProductRow | undefined = specialCodesProducts.find(product => product.code === productCode);
-    const updateRows = [...rows]
-    //if item already exists
-    const item = updateRows.find(product => product.code === productCode)
-    if(item === undefined){
-      if (newrow !== undefined) {
-        updateRows.push(newrow);
-      }
-    }
-    else{
-      item.quantity += 1;
-    }
-    setRows(updateRows);
-    
+  const handleSearchProduct = (productName: string) => {
+    const normalizedSearch = productName.trim().toLowerCase();
+    const newrows = specialCodesProducts.filter(product => 
+      product.product.toLowerCase().includes(normalizedSearch)
+    );
+    setRows(newrows);
   };
+
+
+  
 
   return (
     
@@ -103,8 +96,10 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
         //add manually field change it to add quantity... and add product
     }
     <div className="flex justify-end w-full p-4">
-        <MybuttonSearch textValue="" buttonText="Ajouter" placeholderText="Ajouter le code de produit"
-        onButtonClick={handleAddProduct}/>
+        <MybuttonSearch textValue="" buttonText="Rechercher" placeholderText="le nom du produit"
+        onButtonClick={handleSearchProduct}
+        Downkey="Enter"
+        />
     </div>
 
       {/* Tabs Navigation */}
@@ -146,24 +141,35 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
       {/**table */}
       <div className="p-4">
 
-<table className="table-auto w-full">
 
-<thead className="bg-[#BEE7DB]">
+<div className="w-full max-h-72 overflow-y-scroll relative">
+
+    
+<table className="table-auto w-full ">
+
+<thead className="bg-[#BEE7DB] sticky top-0 z-10">
   <tr className="">
-    <th className="px-4 py-2 rounded-tl-3xl rounded-bl-3xl">Code</th>
+    <th className="px-4 py-2 rounded-tl-xl rounded-bl-xl">Code</th>
     <th className="  px-4 py-2">Produit</th>
     <th className="  px-4 py-2">Quantité</th>
     <th className="  px-4 py-2">Prix unitaire</th>
-    <th className="px-4 py-2 rounded-tr-3xl rounded-br-3xl">Actions</th>
+    <th className="px-4 py-2 rounded-tr-xl rounded-br-xl">Actions</th>
+  </tr>
+
+</thead>
+<thead className="bg-white sticky top-10 z-10 h-1">
+  <tr className="">
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
   </tr>
 </thead>
-</table>
 
-<br></br>
 
-<div className="w-full max-h-72 overflow-y-scroll border border-gray-300 rounded-l-2xl">
-<table className="table-auto w-full">
 <tbody className="">
+
 
   {rows.map((row, index) => (
 
@@ -175,8 +181,8 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
       }
       <td className={clsx(
         "bg-[#EBEBEB] px-4 py-2",
-        index === 0 ? "rounded-tl-2xl" : "",
-        index === rows.length - 1 ? "rounded-bl-2xl" : ""
+        index === 0 ? "rounded-tl-lg" : "",
+        index === rows.length - 1 ? "rounded-bl-lg" : ""
       )}
       >{row.code}</td>
 

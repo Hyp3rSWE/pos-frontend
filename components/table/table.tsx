@@ -48,11 +48,17 @@ const ProductTable: React.FC = () => {
 
   const changedInputQuantityRef = useRef<HTMLInputElement>(null);
 
+
+
+
   useEffect(() => {
     if (changedInputQuantityRef.current) {
       changedInputQuantityRef.current.focus(); // Focus the last input
     }
   }, [rows]); 
+
+  
+
 
 
 
@@ -91,6 +97,7 @@ const ProductTable: React.FC = () => {
     
   };
 
+
   
   const totalAmount = rows.reduce((sum, row) => sum + row.quantity * row.unitPrice, 0);
 
@@ -118,30 +125,36 @@ const ProductTable: React.FC = () => {
         buttonText="Ajouter"
         placeholderText="Ajouter le code de produit"
         onButtonClick={handleAddProduct}
+        Downkey="Enter"
       />
         </div>
 
         <br></br>
 
-      <div>
-      <table className="table-auto w-full">
-
-        <thead className="bg-[#BEE7DB]">
+      <div className="">
+        <div className="w-full max-h-72 overflow-y-scroll">
+        <table className="table-auto w-full">
+        <thead className="bg-[#BEE7DB] sticky top-0 z-10">
           <tr className="">
-            <th className="px-4 py-2 rounded-tl-3xl rounded-bl-3xl">Code</th>
+            <th className="px-4 py-2 rounded-tl-xl rounded-bl-xl">Code</th>
             <th className="  px-4 py-2">Produit</th>
             <th className="  px-4 py-2">Quantité</th>
             <th className="  px-4 py-2">Prix unitaire</th>
             <th className="  px-4 py-2">Prix total</th>
-            <th className="px-4 py-2 rounded-tr-3xl rounded-br-3xl">Actions</th>
+            <th className="px-4 py-2 rounded-tr-xl rounded-br-xl">Actions</th>
           </tr>
         </thead>
-      </table>
+        <thead className="bg-white sticky top-10 z-10 h-1">
+  <tr className="">
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+  </tr>
+</thead>
 
-        <br></br>
-        <div className="w-full max-h-72 overflow-y-scroll border border-gray-300 rounded-l-2xl">
-        <table className="table-auto w-full">
-        
         
         <tbody className="">
 
