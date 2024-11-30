@@ -1,7 +1,9 @@
-import React, { useState , useRef , useEffect} from "react";
+import React, { useState} from "react";
 import { clsx } from 'clsx';
 import MybuttonSearch from '../buttonSearch/buttonSearch';
 import { TiDelete } from "react-icons/ti";
+import { FaPencilAlt } from "react-icons/fa";
+import { IoIosSave } from "react-icons/io";
 
 
 interface ProductRow {
@@ -24,6 +26,8 @@ interface TabsProps {
 const Tabs: React.FC<TabsProps> = ({ tabs }) => {
 
   const [activeTab, setActiveTab] = useState(0);
+  const [isEditable, setEditable] = useState(false);
+  const [EditIndex, setEditIndex] = useState(-1);
 
   //use the get All end point later on
   const specialCodesProducts: ProductRow[] = [
@@ -58,6 +62,18 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
     const updatedRows = rows.filter((_, i) => i !== index);
     setRows(updatedRows);
   };
+
+
+  const handlePriceyChange = (index: number, value: number) => {
+    const updatedRows = [...rows];
+    updatedRows[index].unitPrice = value;
+    setRows(updatedRows);
+  };
+
+  const handleEditPrice = (index: number) => {
+      setEditable(!isEditable)
+      setEditIndex(index)
+  }
 
   const filterReptureStock = () => {
     
@@ -95,7 +111,18 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
     {
         //add manually field change it to add quantity... and add product
     }
-    <div className="flex justify-end w-full p-4">
+    <div className="flex justify-between w-full p-4">
+      <div>
+      <button
+        className="bg-[#BEE7DB] hover:bg-[#5CC3A4] px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-1 m-1"
+      >
+        add product
+      </button>
+      <button
+        className="bg-[#BEE7DB] hover:bg-[#5CC3A4] px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-1 m-1"
+      >add quantity
+        </button>   
+      </div>
         <MybuttonSearch textValue="" buttonText="Rechercher" placeholderText="le nom du produit"
         onButtonClick={handleSearchProduct}
         Downkey="Enter"
@@ -202,20 +229,45 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
       {
         //unit price
       }
-      <td className="bg-[#EBEBEB]  px-4 py-2">{row.unitPrice}</td>
+      <td className="bg-[#EBEBEB]  px-4 py-2">
+        {
+          (isEditable && EditIndex == index)?<input value={row.unitPrice}
+          className="w-16 p-1 border rounded focus:bg-[#BEE7DB]"
+          onChange={(e) => handlePriceyChange(index, parseInt(e.target.value) || 0)}
+          ></input>:
+          row.unitPrice
+        }
+        
+        
+        
+        </td>
 
       {
-        //delete button add the ability to use a shorcut
+        //delete and edit buttons add the ability to use a shorcut
       }
       <td className={clsx(
         "bg-[#EBEBEB] px-4 py-2",
       )}>
+        <div className="flex justify-center content-evenly">
         <button
           onClick={() => handleDeleteRow(index)}
           className="text-white px-2 py-1 rounded"
         >
           <TiDelete className="text-red-500 text-3xl hover:text-red-800"></TiDelete>
         </button>
+
+        <button
+          onClick={() => handleEditPrice(index)}
+          className="text-white px-2 py-1 rounded"
+        >
+          {isEditable && index == EditIndex?
+          <IoIosSave className="text-green-500 text-2xl hover:text-green-900"></IoIosSave>:
+          <FaPencilAlt className="text-black text-2xl hover:text-gray-500"></FaPencilAlt>
+          }
+          
+        </button>
+        </div>
+
       </td>
 
 

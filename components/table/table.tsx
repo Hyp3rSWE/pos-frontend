@@ -188,9 +188,8 @@ const ProductTable: React.FC = () => {
                   type="number"
                   value={row.quantity}
                   onChange={(e) => handleQuantityChange(index, parseInt(e.target.value) || 0)}
-                  className={clsx("w-16 p-1 border rounded focus:bg-[#BEE7DB]",
-                    index == rows.length - 1 ? "" : ""
-                  )}
+                  className={"w-16 p-1 border rounded focus:bg-[#BEE7DB]"
+                  }
                 />
               </td>
 

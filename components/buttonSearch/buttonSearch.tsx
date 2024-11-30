@@ -5,7 +5,6 @@ interface ProductInputProps {
   placeholderText: string;
   Downkey:string;
   textValue : string;
-
   onButtonClick: (inputValue: string) => void;
 }
 
