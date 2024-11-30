@@ -4,7 +4,7 @@ import AppTable from "@/components/table/table";
 
 export default function Stock() {
     return (
-      <div className="flex-col justify-center items-center h-full w-full">
+      <div className="h-full w-full">
         <MySidebar />
         <div className="ml-48 p-4"><AppTable/></div>
         
