@@ -49,7 +49,7 @@ const Sidebar: React.FC = () => {
                         <Link
                             key={href}
                             className={clsx(
-                                "flex flex-col m-4 rounded-2xl justify-center items-center p-4 shadow",
+                                "flex flex-col m-2 mx-4 h-[15vh] rounded-2xl justify-center items-center p-1 shadow",
                                 pathname === href
                                     ? "bg-white text-[#5CC3A4]"
                                     : "hover:bg-slate-50"
