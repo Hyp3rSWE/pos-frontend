@@ -53,7 +53,7 @@ const ProductTable: React.FC = () => {
 
   useEffect(() => {
     if (changedInputQuantityRef.current) {
-      changedInputQuantityRef.current.focus(); // Focus the last input
+      changedInputQuantityRef.current.focus();
     }
   }, [rows]); 
 
@@ -131,102 +131,124 @@ const ProductTable: React.FC = () => {
 
         <br></br>
 
-      <div className="">
-        <div className="w-full max-h-72 overflow-y-scroll">
-        <table className="table-auto w-full">
-        <thead className="bg-[#BEE7DB] sticky top-0 z-10">
-          <tr className="">
-            <th className="px-4 py-2 rounded-tl-xl rounded-bl-xl">Code</th>
-            <th className="  px-4 py-2">Produit</th>
-            <th className="  px-4 py-2">Quantité</th>
-            <th className="  px-4 py-2">Prix unitaire</th>
-            <th className="  px-4 py-2">Prix total</th>
-            <th className="px-4 py-2 rounded-tr-xl rounded-br-xl">Actions</th>
-          </tr>
-        </thead>
-        <thead className="bg-white sticky top-10 z-10 h-1">
-  <tr className="">
-        <th></th>
-        <th></th>
-        <th></th>
-        <th></th>
-        <th></th>
-        <th></th>
-  </tr>
-</thead>
+  
 
         
-        <tbody className="">
+        
+
+
+        <div className="w-full">
+
+        <div className="bg-[#BEE7DB] flex rounded-2xl pt-2 pb-2 pl-3 pr-3">
+            <div className="basis-1/6 flex align-middle justify-center"><div className="font-bold">Code</div></div>
+            <div className="basis-1/6 flex align-middle justify-center"><div className="font-bold">Produit</div></div>
+            <div className="basis-1/6 flex align-middle justify-center"><div className="font-bold">Quantité</div></div>
+            <div className="basis-1/6 flex align-middle justify-center"><div className="font-bold">Prix unitaire</div></div>
+            <div className="basis-1/6 flex align-middle justify-center"><div className="font-bold">Prix totale</div></div>
+            <div className="basis-1/6 flex align-middle justify-center"><div className="font-bold">Actions</div></div>
+        </div>
+
+        <div className="h-2"></div>
+
+        <div className=" ">
+
+
+
+
+        
+        <div className="pl-3 pb-2 pr-0 pt-2 bg-[#EBEBEB] rounded-2xl w-full max-h-72 overflow-y-scroll">
+        <br></br>
+        
 
           {rows.map((row, index) => (
 
 
-            <tr key={index} className="text-center">
+            <div key={index} className="text-center flex">
 
               {
                 //code
               }
-              <td className={clsx(
-                "bg-[#EBEBEB] px-4 py-2",
+              <div className={clsx(
+                "basis-1/6 flex align-middle justify-center",
               )}
-              >{row.code}</td>
+              >
+                <div>{row.code}</div>
+                
+                
+              </div>
 
               {
                 //product
               }
-              <td className="bg-[#EBEBEB]  px-4 py-2">{row.product}</td>
+              <div className="basis-1/6 flex align-middle justify-center">
+              <div>{row.product}</div>
+              </div>
 
 
               {
                 //quantity
               }
-              <td className= {clsx("bg-[#EBEBEB]  px-4 py-2",
-                  index == rows.length - 1 ? "bg-[#BEE7DB]" : ""
+              <div className= {clsx("basis-1/6 flex align-middle justify-center",
+                 
                 )}>
                 <input
                   ref = {index == coloredInputIndex ? changedInputQuantityRef : null}
                   type="number"
                   value={row.quantity}
                   onChange={(e) => handleQuantityChange(index, parseInt(e.target.value) || 0)}
-                  className={"w-16 p-1 border rounded focus:bg-[#BEE7DB]"
+                  className={"w-16 p-1 border rounded focus:bg-[#BEE7DB] h-8 text-center"
                   }
                 />
-              </td>
+              </div>
 
               {
                 //unit proce
               }
-              <td className="bg-[#EBEBEB]  px-4 py-2">{row.unitPrice}</td>
+              <div className="basis-1/6 flex align-middle justify-center">
+              <div>{row.unitPrice}</div>
+              </div>
 
               {
                 //total of product
               }
 
-              <td className="bg-[#EBEBEB]  px-4 py-2">{row.quantity * row.unitPrice}</td>
+              <div className="basis-1/6 flex align-middle justify-center">
+              <div>
+              {(row.quantity * row.unitPrice).toFixed(2)}
+              </div>
+              </div>
 
               {
                 //delete button add the ability to use a shorcut
               }
-              <td className={clsx(
-                "bg-[#EBEBEB] px-4 py-2",
+              <div className={clsx(
+                "basis-1/6 flex align-middle justify-center h-6",
               )}>
                 <button
                   onClick={() => handleDeleteRow(index)}
-                  className="text-white px-2 py-1 rounded"
+                  className="text-white rounded"
                 >
                   <TiDelete className="text-red-500 text-3xl hover:text-red-800"></TiDelete>
                 </button>
-              </td>
+              </div>
+              
+              <br></br>
+              <br></br>
 
 
-            </tr>
+            </div>
+            
+
+
           ))}
-        </tbody>
+        </div>
       
-      </table>
       </div>
 
-        </div>
+      
+      </div>
+
+       
 
 
 
