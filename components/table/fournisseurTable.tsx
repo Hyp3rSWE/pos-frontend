@@ -3,6 +3,7 @@ import { clsx } from 'clsx';
 import MybuttonSearch from '../buttonSearch/buttonSearch';
 import {AllFournisseurData} from "../../data/Allfournisser";
 import { inventory } from "@/data/fournisseur";
+import {fournisseursWithPayments} from "@/data/payement";
 
 
 interface FournisseurRow {
@@ -33,14 +34,23 @@ interface Product {
     products: Product[]; // List of products for that date
   }
 
+  interface Transaction {
+    date: string;
+    amountPaid: number;
+  }
+  
+  interface Fournisseur {
+    Name: string;
+    transactions: Transaction[];
+  }
+
 
 const Tabs: React.FC<TabsProps> = ({ tabs }) => {
 
   const [activeTab, setActiveTab] = useState(0);
-  const [isEditable, setEditable] = useState(false);
-  const [EditIndex, setEditIndex] = useState(-1);
   const [rows, setRows] = useState<FournisseurRow[]>(AllFournisseurData);
   const [rowsFournisseur, setRowsFournisseur] = useState<DatedProductList[]>();
+  const [rowsFournisseurPayement, setRowsFournisseurPayement] = useState<Transaction[]>();
   const [isFournisseur , setFournisseur] = useState<Boolean>(false);
   const [CurrentFournisser , setCurrentFournisseur] = useState<String>("");
 
@@ -128,6 +138,7 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
             <div key={index} className="text-center flex pt-2 pb-2 mt-1 mb-1 hover:bg-[#cac9c9]"
             onClick={()=>{
                 setRowsFournisseur(inventory.find((fournisseur) => fournisseur.name === row.Name)?.datedProductLists);
+                setRowsFournisseurPayement(fournisseursWithPayments.find((fournisseur)=>fournisseur.Name === row.Name)?.transactions);
                 setFournisseur(true);
 
                 
@@ -274,7 +285,8 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
               {/**table */}
               {//wch hed div
               }
-
+        {activeTab == 0?
+          
         <div className="">
 
 
@@ -379,6 +391,66 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
         
         </div>
         </div>
+        :
+        <div>
+          <div className="flex w-full justify-end">
+              <button
+                className="bg-[#BEE7DB] hover:bg-[#5CC3A4] px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-1 m-1 mb-2"
+                onClick={()=>{}}
+              >
+                Add Payement
+              </button> 
+              </div>
+          <div className="">
+        
+        <div className="bg-[#BEE7DB] flex rounded-2xl pt-2 pb-2 pl-3 pr-3">
+        <div className="basis-1/3 flex align-middle justify-center"><div className="font-bold">Date</div></div>
+        <div className="basis-1/3 flex align-middle justify-center"><div className="font-bold">Payement amount</div></div>
+        </div>
+        
+        <div className="h-2"></div>
+        
+        <div className="pl-3 pb-2 pr-0 pt-2 bg-[#EBEBEB] rounded-2xl w-full max-h-72 overflow-y-scroll">
+
+        
+          
+          {rowsFournisseurPayement?.map((row, index) => (
+        
+            <div>
+            <div key={index} className="text-center flex pt-2 pb-2 mt-1 mb-1">        
+              {
+                //Date
+              }
+              <div className={clsx(
+                "basis-1/3 flex align-middle justify-center",
+              )}
+              >
+                <div>{row.date}</div></div>
+        
+        
+    
+        
+              {
+                //amount paid
+              }
+              <div className="basis-1/3 flex align-middle justify-center">
+                {
+                  row.amountPaid
+                }
+                </div>
+               </div>      
+              </div>
+           
+          ))}  
+        
+        
+        </div>
+        </div>
+
+
+        </div>
+          
+        }
             </div>
         )
     }
