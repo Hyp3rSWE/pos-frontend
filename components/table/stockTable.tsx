@@ -14,6 +14,11 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
   const [isEditable, setEditable] = useState(false); //for the quantity
   const [EditIndex, setEditIndex] = useState(-1); //for the quantity as well
   const [rows, setRows] = useState<ProductRow[]>(AllCodesProducts);//initially display them all
+  const [AddProductpopup, setAddProductpopup] = useState<boolean>(false); 
+  const [DeleteIndex, setDeleteIndex] = useState<number>(-1); 
+  const [DeleteProductpopup, setDeleteProductpopup] = useState<boolean>(false); 
+  const [AddQuantitypopup, setAddQuantitypopup] = useState<boolean>(false); 
+  const [SavePricepopup, setSavePricepopup] = useState<boolean>(false); 
 
 
   const handleDeleteRow = (index: number) => {
@@ -59,20 +64,123 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
   return (
     
     <div className="w-full">
+{//the pop up of adding a product
+}
+<div className={clsx('',
+        AddProductpopup && "fixed inset-0 bg-black bg-opacity-50 items-center z-50 flex justify-center align-middle"
+      )}>
+        <div className="w-1/2 bg-white rounded-2xl flex-col">
 
+          <div className={clsx("text-center text-4xl p-3 ",!AddProductpopup && "hidden")}
+          >Please enter the information of the added product</div>
 
-    {
-        //add manually field change it to add quantity... and add product
-    }
+          <div className={clsx("p-5 w-full",!AddProductpopup&&"hidden")}>
+            <div className="w-full flex justify-evenly"><div className="m-1 text-2xl w-1/2">Product Code:</div><input type="text" className="m-1 border-2 border-gray-300 rounded-lg p-0.5 w-1/2"/></div>
+            <div className="w-full flex justify-evenly"><div className="m-1 text-2xl w-1/2">Product Name:</div><input type="text" className="m-1 border-2 border-gray-300 rounded-lg p-0.5 w-1/2"/></div>
+            <div className="w-full flex justify-evenly"><div className="m-1 text-2xl w-1/2">Product quantity:</div><input type="text" className="m-1 border-2 border-gray-300 rounded-lg p-0.5 w-1/2"/></div>
+            <div className="w-full flex justify-evenly"><div className="m-1 text-2xl w-1/2">Product unit price:</div><input type="text" className="m-1 border-2 border-gray-300 rounded-lg p-0.5 w-1/2"/></div>
+
+          </div>
+
+          <div className="flex justify-center p-3">
+            <button className={clsx("bg-[#BEE7DB] hover:bg-[#5CC3A4] px-4 py-2 rounded-2xl focus:outline-none focus:ring-2 focus:ring-offset-1 m-1",
+            !AddProductpopup&&"hidden"
+            )}
+            
+             onClick={()=>setAddProductpopup(false)}>Add</button>
+            <button className={clsx("bg-[#BEE7DB] hover:bg-[#5CC3A4] px-4 py-2 rounded-2xl focus:outline-none focus:ring-2 focus:ring-offset-1 m-1",
+            !AddProductpopup&&"hidden")} onClick={()=>setAddProductpopup(false)}>Cancel</button>
+          </div>
+        </div>
+      </div>
+
+{//the pop up of adding a quantity
+}
+<div className={clsx('',
+        AddQuantitypopup && "fixed inset-0 bg-black bg-opacity-50 items-center z-50 flex justify-center align-middle"
+      )}>
+        <div className="w-1/2 bg-white rounded-2xl flex-col">
+
+          <div className={clsx("text-center text-4xl p-3 ",!AddQuantitypopup && "hidden")}
+          >Please enter the quantity of the product you want to add</div>
+
+          <div className={clsx("p-5 w-full",!AddQuantitypopup&&"hidden")}>
+          <div className="w-full flex justify-evenly"><div className="m-1 text-2xl w-1/2">Product quantity:</div><input type="text" className="m-1 border-2 border-gray-300 rounded-lg p-0.5 w-1/2"/></div>
+          <div className="w-full flex justify-evenly"><div className="m-1 text-2xl w-1/2">Product code:</div><input type="text" className="m-1 border-2 border-gray-300 rounded-lg p-0.5 w-1/2"/></div>
+          </div>
+
+          <div className="flex justify-center p-3">
+            <button className={clsx("bg-[#BEE7DB] hover:bg-[#5CC3A4] px-4 py-2 rounded-2xl focus:outline-none focus:ring-2 focus:ring-offset-1 m-1",
+            !AddQuantitypopup&&"hidden")}
+             onClick={()=>setAddQuantitypopup(false)}>Add</button>
+            <button className={clsx("bg-[#BEE7DB] hover:bg-[#5CC3A4] px-4 py-2 rounded-2xl focus:outline-none focus:ring-2 focus:ring-offset-1 m-1",
+            !AddQuantitypopup&&"hidden")} onClick={()=>setAddQuantitypopup(false)}>Cancel</button>
+          </div>
+        </div>
+      </div>
+
+{//the pop up of saving the price
+}
+<div className={clsx('',
+        SavePricepopup && "fixed inset-0 bg-black bg-opacity-50 items-center z-50 flex justify-center align-middle"
+      )}>
+        <div className="w-1/2 bg-white rounded-2xl flex-col">
+
+          <div className={clsx("text-center text-4xl p-3 ",!SavePricepopup && "hidden")}
+          >Are you sure you want to perform this operation ?</div>
+          <div className={clsx("p-5 w-full",!AddQuantitypopup&&"hidden")}>
+          </div>
+
+          <div className="flex justify-center p-3">
+            <button className={clsx("bg-[#BEE7DB] hover:bg-[#5CC3A4] px-4 py-2 rounded-2xl focus:outline-none focus:ring-2 focus:ring-offset-1 m-1",
+            !SavePricepopup&&"hidden")}
+             onClick={()=>setSavePricepopup(false)}>Yes</button>
+            <button className={clsx("bg-[#BEE7DB] hover:bg-[#5CC3A4] px-4 py-2 rounded-2xl focus:outline-none focus:ring-2 focus:ring-offset-1 m-1",
+            !SavePricepopup&&"hidden")} onClick={()=>setSavePricepopup(false)}>Cancel</button>
+          </div>
+        </div>
+      </div>
+
+{//the pop up of deleting the record
+}
+<div className={clsx('',
+        DeleteProductpopup && "fixed inset-0 bg-black bg-opacity-50 items-center z-50 flex justify-center align-middle"
+      )}>
+        <div className="w-1/2 bg-white rounded-2xl flex-col">
+
+          <div className={clsx("text-center text-4xl p-3 ",!DeleteProductpopup && "hidden")}
+          >Are you sure you want to delete this product ?</div>
+          <div className={clsx("p-5 w-full",!DeleteProductpopup&&"hidden")}>
+          </div>
+          <div className="flex justify-center p-3">
+            <button className={clsx("bg-[#BEE7DB] hover:bg-[#5CC3A4] px-4 py-2 rounded-2xl focus:outline-none focus:ring-2 focus:ring-offset-1 m-1",
+            !DeleteProductpopup&&"hidden")}
+             onClick={()=>{setDeleteProductpopup(false)
+              handleDeleteRow(DeleteIndex)
+             }}>Yes</button>
+            <button className={clsx("bg-[#BEE7DB] hover:bg-[#5CC3A4] px-4 py-2 rounded-2xl focus:outline-none focus:ring-2 focus:ring-offset-1 m-1",
+            !DeleteProductpopup&&"hidden")} onClick={()=>{setDeleteProductpopup(false)
+              setDeleteIndex(-1)}}>Cancel</button>
+          </div>
+        </div>
+      </div>
+    <div>
+    <div className="flex justify-end items-center mr-4 -mt-10">
+         <span className="text-6xl font-bold mr-10">Totale Stock:</span>
+         <span className="text-6xl font-bold bg-[#BEE7DB] text-black px-4 py-2 rounded-2xl">
+    {-1}
+         </span>
+        </div>
     <div className="flex justify-between w-full p-4">
       <div>
       <button
         className="bg-[#BEE7DB] hover:bg-[#5CC3A4] px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-1 m-1"
-      >
+        onClick={()=>setAddProductpopup(true)}>
         add product
       </button>
       <button
         className="bg-[#BEE7DB] hover:bg-[#5CC3A4] px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-1 m-1"
+        onClick={()=>setAddQuantitypopup(true)}
       >add quantity
         </button>   
       </div>
@@ -80,7 +188,7 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
         onButtonClick={handleSearchProduct}
         Downkey="Enter"
         />
-    </div>
+    </div></div>
 
       {/* Tabs Navigation */}
       <div className="flex space-x-6 border-b border-gray-300 p-4">
@@ -179,14 +287,16 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
       <div className="basis-1/5 flex align-middle justify-center h-8">
         <div className="flex justify-center content-evenly">
         <button
-          onClick={() => handleDeleteRow(index)}
+          onClick={() => {setDeleteProductpopup(true) 
+            setDeleteIndex(index)}}
           className="text-white px-2 py-1 rounded"
         >
           <TiDelete className="text-red-500 text-3xl hover:text-red-800"></TiDelete>
         </button>
 
         <button
-          onClick={() => handleEditPrice(index)}
+          onClick={()=>{handleEditPrice(index);
+            (isEditable && index == EditIndex)?setSavePricepopup(true):()=>{}}}
           className="text-white px-2 py-1 rounded"
         >
           {isEditable && index == EditIndex?

@@ -12,19 +12,29 @@ const ProductTable: React.FC = () => {
   //the rows gets updated after reading value from scanner
   //or using "ajouter un produit" INITIALLY EMPTY
   const [rows, setRows] = useState<ProductRow[]>([]); 
+  const [focus, setfocus] = useState<boolean>(false); 
+  const [popup, setpopup] = useState<boolean>(false); 
   const [coloredInputIndex, setColoredIndex] = useState<number>(rows.length);
   const changedInputQuantityRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (changedInputQuantityRef.current) {
+    if (changedInputQuantityRef.current && focus) {
       changedInputQuantityRef.current.focus();
+      changedInputQuantityRef.current.select();
+      setfocus(false);
+     
     }
   }, [rows]); 
 
   const handleQuantityChange = (index: number, value: number) => {
     const updatedRows = [...rows];
-    updatedRows[index].quantity = value;
+    if(value >= 1)
+      updatedRows[index].quantity = value;
+    else
+    updatedRows[index].quantity = 1
+    
     setRows(updatedRows);
+
   };
 
 
@@ -45,11 +55,13 @@ const ProductTable: React.FC = () => {
       if (newrow !== undefined) {
         updateRows.push(newrow);
         setColoredIndex(rows.length);
+        setfocus(true);
       }
     }
     else{
       item.quantity += 1;
       setColoredIndex(index);
+      setfocus(true);
     }
     setRows(updateRows);
   };
@@ -59,6 +71,25 @@ const ProductTable: React.FC = () => {
 
   return (
     <div className="p-4">
+      <div className={clsx('',
+        popup && "fixed inset-0 bg-black bg-opacity-50 items-center z-50 flex justify-center align-middle"
+      )}>
+        <div className="w-1/2 bg-white rounded-2xl flex-col">
+
+          <div className={clsx("text-center text-4xl p-3",!popup && "hidden")}
+          >Do you want to print a receipts ?</div>
+
+          <div className="flex justify-center p-3">
+            <button className={clsx("bg-[#BEE7DB] hover:bg-[#5CC3A4] px-4 py-2 rounded-2xl focus:outline-none focus:ring-2 focus:ring-offset-1 m-1",
+            !popup&&"hidden"
+            )}
+            
+             onClick={()=>setpopup(false)}>Yes</button>
+            <button className={clsx("bg-[#BEE7DB] hover:bg-[#5CC3A4] px-4 py-2 rounded-2xl focus:outline-none focus:ring-2 focus:ring-offset-1 m-1",
+            !popup&&"hidden")} onClick={()=>setpopup(false)}>No</button>
+          </div>
+        </div>
+      </div>
 
         {
           //the total text field
@@ -140,7 +171,7 @@ const ProductTable: React.FC = () => {
                   ref = {index == coloredInputIndex ? changedInputQuantityRef : null}
                   type="number"
                   value={row.quantity}
-                  onChange={(e) => handleQuantityChange(index, parseInt(e.target.value) || 0)}
+                  onChange={(e) => handleQuantityChange(index, parseInt(e.target.value) || 1)}
                   className={"w-16 p-1 border rounded focus:bg-[#BEE7DB] h-8 text-center"
                   }
                 />
@@ -188,7 +219,9 @@ const ProductTable: React.FC = () => {
       </div>
       </div>
       <div className="flex justify-end items-center mt-4">
-        <button className="bg-[#BEE7DB] hover:bg-[#5CC3A4] px-4 py-2 rounded-2xl focus:outline-none focus:ring-2 focus:ring-offset-1">Valider</button>
+        <button className="bg-[#BEE7DB] hover:bg-[#5CC3A4] px-4 py-2 rounded-2xl focus:outline-none focus:ring-2 focus:ring-offset-1"
+        onClick={()=>setpopup(true)}
+        >Valider</button>
       </div>
     </div>
   );
