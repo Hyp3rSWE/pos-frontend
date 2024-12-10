@@ -1,97 +1,31 @@
 import React, { useState} from "react";
 import { clsx } from 'clsx';
 import MybuttonSearch from '../buttonSearch/buttonSearch';
-import {AllFournisseurData} from "../../data/Allfournisser";
-import { inventory } from "@/data/fournisseur";
-import {fournisseursWithPayments} from "@/data/payement";
-
-
-interface FournisseurRow {
-  Name: string;
-  PhoneNumber: string;
-  Depts: number;
-}
-
-interface Tab {
-  label: string;
-  content: React.ReactNode;
-}
-
-interface TabsProps {
-  tabs: Tab[];
-}
-
-interface Product {
-    unitPrice: number; // Unit price of the product
-    productCode: string; // Unique product code
-    productName: string; // Name of the product
-    quantity: number; // Quantity of the product
-  }
-  
-  // Define the structure for a dated product list
-  interface DatedProductList {
-    date: string; // Date in ISO format (e.g., "2024-12-09")
-    products: Product[]; // List of products for that date
-  }
-
-  interface Transaction {
-    date: string;
-    amountPaid: number;
-  }
-  
-  interface Fournisseur {
-    Name: string;
-    transactions: Transaction[];
-  }
+import {AllFournisseurData} from "../../data/fournisseur/Allfournisser";
+import { inventory } from "@/data/fournisseur/fournisseur";
+import {fournisseursWithPayments} from "@/data/fournisseur/payement";
+import {TabsProps , FournisseurRow , DatedProductList , Transaction} from "../../types/index";
 
 
 const Tabs: React.FC<TabsProps> = ({ tabs }) => {
 
   const [activeTab, setActiveTab] = useState(0);
+  //all fournisseur
   const [rows, setRows] = useState<FournisseurRow[]>(AllFournisseurData);
+  //oneFournisseur: the products tab
   const [rowsFournisseur, setRowsFournisseur] = useState<DatedProductList[]>();
+  //one fournisseur the payementsTab
   const [rowsFournisseurPayement, setRowsFournisseurPayement] = useState<Transaction[]>();
+  //used for to navigate between many fournisseurs and one fournisseur
   const [isFournisseur , setFournisseur] = useState<Boolean>(false);
-  const [CurrentFournisser , setCurrentFournisseur] = useState<String>("");
 
 
-  
-
-  const handleDeleteRow = (index: number) => {
-    const updatedRows = rows.filter((_, i) => i !== index);
-    setRows(updatedRows);
-  };
-
-
-
-
-
-
-
-
-  //looking for the product in the "special Names to add it"
-  //change that one... 
-  const handleSearchFournisseur = (productName: string) => {
-    const normalizedSearch = productName.trim().toLowerCase();
-    const newrows = AllFournisseurData.filter(fournisseur => 
-      fournisseur.Name.toLowerCase().includes(normalizedSearch)
-    );
-    setRows(newrows);
-  };
-
-
-  
-
-    const totalDepts = rows.reduce((sum, row) => sum + row.Depts , 0);
+    const totalDepts = rows.reduce((sum, row) => sum + row.Depts , 0);//all fournisseur depts
     //all the fournisseurs table
     if(!isFournisseur){
         return   (
-    
-    
             <div className="w-full p-4">
-
-{
-          //the total depts text field
+            {//the total depts text field
             }
         <div className="flex justify-end items-center mb-4">
          <span className="text-6xl font-bold mr-10">Total depts:</span>
@@ -99,8 +33,6 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
             {totalDepts.toFixed(2)}
          </span>
         </div>
-        
-        
             {
                 //add manually field change it to add quantity... and add product
             }
@@ -119,45 +51,31 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
             </div>        
               {/**table */}
         <div className="">
-        
         <div className="bg-[#BEE7DB] flex rounded-2xl pt-2 pb-2 pl-3 pr-3">
         <div className="basis-1/3 flex align-middle justify-center"><div className="font-bold">Nom</div></div>
         <div className="basis-1/3 flex align-middle justify-center"><div className="font-bold">Numéro de téléphone</div></div>
         <div className="basis-1/3 flex align-middle justify-center"><div className="font-bold">depts</div></div>
         </div>
-        
         <div className="h-2"></div>
-        
         <div className="pl-3 pb-2 pr-0 pt-2 bg-[#EBEBEB] rounded-2xl w-full max-h-72 overflow-y-scroll">
 
         
-          
+          {//rows for all the fournisseur
+}
           {rows.map((row, index) => (
-        
             <div>
             <div key={index} className="text-center flex pt-2 pb-2 mt-1 mb-1 hover:bg-[#cac9c9]"
             onClick={()=>{
                 setRowsFournisseur(inventory.find((fournisseur) => fournisseur.name === row.Name)?.datedProductLists);
                 setRowsFournisseurPayement(fournisseursWithPayments.find((fournisseur)=>fournisseur.Name === row.Name)?.transactions);
-                setFournisseur(true);
-
-                
-            }         
-        }
-            >
-        
-              {
-                //Name
+                setFournisseur(true);}}>
+              {//Name
               }
               <div className={clsx(
                 "basis-1/3 flex align-middle justify-center",
               )}
               >
-                <div>{row.Name}</div></div>
-        
-        
-    
-        
+                <div>{row.Name}</div></div>    
               {
                 //Phone number
               }
@@ -166,7 +84,6 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
                   row.PhoneNumber
                 }
                 </div>
-
               {
                 //Depts
               }
@@ -174,64 +91,33 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
                 {
                   row.Depts
                 }
-                </div>
-        
-              {
-                //delete and edit buttons add the ability to use a shorcut
-              }  
+                </div> 
                </div>      
-              </div>
-           
-          ))}  
-        
-        
+              </div>))}  
         </div>
         </div>
-        
-        
-        
-        
-        
-        
-        
-            </div>
-          );
-    }
+            </div>);}
+
+    //one fournisseur page
     else{
-
-        
-
-        //the pages for each fournisseur
-        console.log(CurrentFournisser);
-
-
-
-
+      //perhaps bring it from data later on
+      const totalDeptsFournisseur = -1
+      rows.reduce((sum, row) => sum + row.Depts , 0);//all fournisseur depts
         return (
             <div className="w-full p-4">
-
-
-{
-          //the total depts text field
-            }
+        {//the total depts for that fournisseur text field
+        }
         <div className="flex justify-end items-center mb-4">
          <span className="text-6xl font-bold mr-10">Total depts:</span>
          <span className="text-6xl font-bold bg-[#BEE7DB] text-black px-4 py-2 rounded-2xl">
-            {totalDepts.toFixed(2)}
+            {totalDeptsFournisseur.toFixed(2)}
          </span>
         </div>
-        
-        
-            {
-                //add manually field change it to add quantity... and add product
-            }
             <div className="flex justify-between w-full pt-4 pb-4">
               <div>
               <button
                 className="bg-[#BEE7DB] hover:bg-[#5CC3A4] px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-1 m-1"
-                onClick={()=>{setFournisseur(false)
-                    setCurrentFournisseur("");
-                }}
+                onClick={()=>{setFournisseur(false)}}
               >
                 go back to all fournisseurs
               </button> 
@@ -240,10 +126,7 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
                 onButtonClick={()=>{}}
                 Downkey="Enter"
                 />
-            </div>
-
-
-        
+            </div>        
               {/* Tabs Navigation */
               <div className="flex space-x-6 border-b border-gray-300 p-4">
         
@@ -252,20 +135,7 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
                     className={`relative pb-2 text-lg font-medium ${
                       activeTab === index ? "text-blue-900" : "text-gray-500"
                     }`}
-                    onClick={() => {setActiveTab(index)
-                        console.log(index);
-                        if(index == 1){
-                           ;
-                        }
-                        else if(index == 2){
-                            ;
-                        }
-                        else{
-                            ;
-                        }
-        
-                    }
-                  
+                    onClick={() => {setActiveTab(index)}
                     }
                   >
                     {tab.label}
@@ -278,19 +148,11 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
               </div>
               
               }
-        
-
-        
-        
               {/**table */}
               {//wch hed div
               }
         {activeTab == 0?
-          
         <div className="">
-
-
-        
         <div className="bg-[#BEE7DB] flex rounded-2xl pt-2 pb-2 pl-3 pr-3">
         <div className="basis-1/5 flex align-middle justify-center"><div className="font-bold">Code</div></div>
         <div className="basis-1/5 flex align-middle justify-center"><div className="font-bold">Produit</div></div>
@@ -298,22 +160,9 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
         <div className="basis-1/5 flex align-middle justify-center"><div className="font-bold">Quantité</div></div>
         <div className="basis-1/5 flex align-middle justify-center"><div className="font-bold">Prix totale</div></div>
         </div>
-
-        
         <div className="h-2"></div>
-        
         <div className="w-full max-h-72 overflow-y-scroll">
-
-        
-          
           {rowsFournisseur?.map((rowFour, index) => (
-
-            
-
-
-
-
-        
             <div>
 
             {//the row of the date
@@ -411,9 +260,6 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
         <div className="h-2"></div>
         
         <div className="pl-3 pb-2 pr-0 pt-2 bg-[#EBEBEB] rounded-2xl w-full max-h-72 overflow-y-scroll">
-
-        
-          
           {rowsFournisseurPayement?.map((row, index) => (
         
             <div>
@@ -426,10 +272,6 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
               )}
               >
                 <div>{row.date}</div></div>
-        
-        
-    
-        
               {
                 //amount paid
               }
@@ -440,14 +282,9 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
                 </div>
                </div>      
               </div>
-           
           ))}  
-        
-        
         </div>
         </div>
-
-
         </div>
           
         }

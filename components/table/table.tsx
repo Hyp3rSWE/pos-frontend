@@ -2,65 +2,24 @@ import React, { useState , useRef , useEffect} from "react";
 import { clsx } from 'clsx';
 import MybuttonSearch from '../buttonSearch/buttonSearch';
 import { TiDelete } from "react-icons/ti";
+import {ProductRow} from "../../types/index"
+import {CodesProducts} from "../../data/vendre/GetProduct"; //this will probably changes later on...
 
-interface ProductRow {
-  code: string;
-  product: string;
-  quantity: number;
-  unitPrice: number;
-}
+
 
 
 const ProductTable: React.FC = () => {
-
-  //later on this will be changed use the endpoint... GET THE DATA
-  const specialCodesProducts: ProductRow[] = [
-    { code: "1", product: "Bread", quantity: 10, unitPrice: 1.5 },
-    { code: "2", product: "Eggs", quantity: 12, unitPrice: 0.2 },
-    { code: "3", product: "Milk", quantity: 8, unitPrice: 1.2 },
-    { code: "4", product: "Apples", quantity: 15, unitPrice: 0.5 },
-    { code: "5", product: "Potatoes", quantity: 20, unitPrice: 0.3 },
-    { code: "6", product: "Bananas", quantity: 18, unitPrice: 0.6 },
-    { code: "7", product: "Cheese", quantity: 5, unitPrice: 2.0 },
-    { code: "8", product: "Tomatoes", quantity: 25, unitPrice: 0.4 },
-    { code: "9", product: "Carrots", quantity: 30, unitPrice: 0.2 },
-    { code: "10", product: "Onions", quantity: 22, unitPrice: 0.25 },
-    { code: "11", product: "Chicken", quantity: 7, unitPrice: 3.5 },
-    { code: "12", product: "Fish", quantity: 6, unitPrice: 4.0 },
-    { code: "13", product: "Butter", quantity: 8, unitPrice: 2.5 },
-    { code: "14", product: "Yogurt", quantity: 10, unitPrice: 1.0 },
-    { code: "15", product: "Pasta", quantity: 15, unitPrice: 0.8 },
-    { code: "16", product: "Rice", quantity: 12, unitPrice: 0.7 },
-    { code: "17", product: "Flour", quantity: 20, unitPrice: 0.9 },
-    { code: "18", product: "Sugar", quantity: 25, unitPrice: 0.5 },
-    { code: "19", product: "Salt", quantity: 18, unitPrice: 0.2 },
-    { code: "20", product: "Oil", quantity: 5, unitPrice: 5.0 }
-  ];
-
   //the rows gets updated after reading value from scanner
   //or using "ajouter un produit" INITIALLY EMPTY
-  const [rows, setRows] = useState<ProductRow[]>([
-    { code: "12345678910", product: "Thon", quantity: 12, unitPrice: 100 },
-    { code: "12345678910", product: "Thon", quantity: 12, unitPrice: 100 },
-  ]);
-
+  const [rows, setRows] = useState<ProductRow[]>([]); 
   const [coloredInputIndex, setColoredIndex] = useState<number>(rows.length);
-
   const changedInputQuantityRef = useRef<HTMLInputElement>(null);
-
-
-
 
   useEffect(() => {
     if (changedInputQuantityRef.current) {
       changedInputQuantityRef.current.focus();
     }
   }, [rows]); 
-
-  
-
-
-
 
   const handleQuantityChange = (index: number, value: number) => {
     const updatedRows = [...rows];
@@ -74,10 +33,10 @@ const ProductTable: React.FC = () => {
     setRows(updatedRows);
   };
 
-  //looking for the product in the "special codes to add it"
+  //looking for the product in the "product codes to add it" if it is already in the invoice just increment by one 
 
   const handleAddProduct = (productCode: string) => {
-    const newrow : ProductRow | undefined = specialCodesProducts.find(product => product.code === productCode);
+    const newrow : ProductRow | undefined = CodesProducts.find(product => product.code === productCode);
     const updateRows = [...rows]
     //if item already exists
     const item = updateRows.find(product => product.code === productCode)
@@ -93,12 +52,8 @@ const ProductTable: React.FC = () => {
       setColoredIndex(index);
     }
     setRows(updateRows);
-    
-    
   };
 
-
-  
   const totalAmount = rows.reduce((sum, row) => sum + row.quantity * row.unitPrice, 0);
 
 
@@ -131,12 +86,6 @@ const ProductTable: React.FC = () => {
 
         <br></br>
 
-  
-
-        
-        
-
-
         <div className="w-full">
 
         <div className="bg-[#BEE7DB] flex rounded-2xl pt-2 pb-2 pl-3 pr-3">
@@ -152,10 +101,6 @@ const ProductTable: React.FC = () => {
 
         <div className=" ">
 
-
-
-
-        
         <div className="pl-3 pb-2 pr-0 pt-2 bg-[#EBEBEB] rounded-2xl w-full max-h-72 overflow-y-scroll">
         <br></br>
         
@@ -237,21 +182,11 @@ const ProductTable: React.FC = () => {
 
 
             </div>
-            
-
-
           ))}
         </div>
       
       </div>
-
-      
       </div>
-
-       
-
-
-
       <div className="flex justify-end items-center mt-4">
         <button className="bg-[#BEE7DB] hover:bg-[#5CC3A4] px-4 py-2 rounded-2xl focus:outline-none focus:ring-2 focus:ring-offset-1">Valider</button>
       </div>

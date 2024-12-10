@@ -4,65 +4,22 @@ import MybuttonSearch from '../buttonSearch/buttonSearch';
 import { TiDelete } from "react-icons/ti";
 import { FaPencilAlt } from "react-icons/fa";
 import { IoIosSave } from "react-icons/io";
+import {ProductRow , TabsProps} from "../../types/index";
+import {AllCodesProducts} from "../../data/stock/allProducts";
 
-
-interface ProductRow {
-  code: string;
-  product: string;
-  quantity: number;
-  unitPrice: number;
-}
-
-interface Tab {
-  label: string;
-  content: React.ReactNode;
-}
-
-interface TabsProps {
-  tabs: Tab[];
-}
 
 
 const Tabs: React.FC<TabsProps> = ({ tabs }) => {
-
   const [activeTab, setActiveTab] = useState(0);
-  const [isEditable, setEditable] = useState(false);
-  const [EditIndex, setEditIndex] = useState(-1);
+  const [isEditable, setEditable] = useState(false); //for the quantity
+  const [EditIndex, setEditIndex] = useState(-1); //for the quantity as well
+  const [rows, setRows] = useState<ProductRow[]>(AllCodesProducts);//initially display them all
 
-  //use the get All end point later on
-  const specialCodesProducts: ProductRow[] = [
-    { code: "1", product: "Bread", quantity: 10, unitPrice: 1.5 },
-    { code: "2", product: "Eggs", quantity: 12, unitPrice: 0.2 },
-    { code: "3", product: "Milk", quantity: 8, unitPrice: 1.2 },
-    { code: "4", product: "Apples", quantity: 15, unitPrice: 0.5 },
-    { code: "5", product: "Potatoes", quantity: 20, unitPrice: 0.3 },
-    { code: "6", product: "Bananas", quantity: 18, unitPrice: 0.6 },
-    { code: "7", product: "Cheese", quantity: 5, unitPrice: 2.0 },
-    { code: "8", product: "Tomatoes", quantity: 25, unitPrice: 0.4 },
-    { code: "9", product: "Carrots", quantity: 30, unitPrice: 0.2 },
-    { code: "10", product: "Onions", quantity: 22, unitPrice: 0.25 },
-    { code: "11", product: "Chicken", quantity: 7, unitPrice: 3.5 },
-    { code: "12", product: "Fish", quantity: 6, unitPrice: 4.0 },
-    { code: "13", product: "Butter", quantity: 8, unitPrice: 2.5 },
-    { code: "14", product: "Yogurt", quantity: 10, unitPrice: 1.0 },
-    { code: "15", product: "Pasta", quantity: 15, unitPrice: 0.8 },
-    { code: "16", product: "Rice", quantity: 12, unitPrice: 0.7 },
-    { code: "17", product: "Flour", quantity: 20, unitPrice: 0.9 },
-    { code: "18", product: "Sugar", quantity: 25, unitPrice: 0.5 },
-    { code: "19", product: "Salt", quantity: 18, unitPrice: 0.2 },
-    { code: "20", product: "Oil", quantity: 5, unitPrice: 5.0 }
-  ];
-
-  const [rows, setRows] = useState<ProductRow[]>(specialCodesProducts);
-
-
-  
 
   const handleDeleteRow = (index: number) => {
     const updatedRows = rows.filter((_, i) => i !== index);
     setRows(updatedRows);
   };
-
 
   const handlePriceyChange = (index: number, value: number) => {
     const updatedRows = [...rows];
@@ -76,32 +33,28 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
   }
 
   const filterReptureStock = () => {
-    
-    const updatedRows = specialCodesProducts.filter(product => product.quantity < 10);
+    const updatedRows = AllCodesProducts.filter(product => product.quantity < 10);
     setRows(updatedRows);
   }
 
   const filterThresholdStock = () => {
-    const updatedRows = specialCodesProducts.filter(product => product.quantity == 0);
+    const updatedRows = AllCodesProducts.filter(product => product.quantity == 0);
     setRows(updatedRows);
   }
   const NoFilterStock = () => {
-    const updatedRows = specialCodesProducts;
+    const updatedRows = AllCodesProducts;
     setRows(updatedRows);
   }
 
-  //looking for the product in the "special codes to add it"
+  //looking for the product in the "product codes to add it"
   //change that one... 
   const handleSearchProduct = (productName: string) => {
     const normalizedSearch = productName.trim().toLowerCase();
-    const newrows = specialCodesProducts.filter(product => 
+    const newrows = AllCodesProducts.filter(product => 
       product.product.toLowerCase().includes(normalizedSearch)
     );
     setRows(newrows);
   };
-
-
-  
 
   return (
     
@@ -218,9 +171,6 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
           ></input>:
           row.unitPrice
         }
-        
-        
-        
         </div>
 
       {
@@ -255,15 +205,8 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
   ))}  
 
 
+                                      </div>       
 </div>
-</div>
-
-
-
-
-
-
-
     </div>
   );
 };

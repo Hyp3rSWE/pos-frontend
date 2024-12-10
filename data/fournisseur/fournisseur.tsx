@@ -1,22 +1,6 @@
-// Define the structure for a product item
-interface Product {
-    unitPrice: number; // Unit price of the product
-    productCode: string; // Unique product code
-    productName: string; // Name of the product
-    quantity: number; // Quantity of the product
-  }
-  
-  // Define the structure for a dated product list
-  interface DatedProductList {
-    date: string; // Date in ISO format (e.g., "2024-12-09")
-    products: Product[]; // List of products for that date
-  }
-  
-  // Define the structure for a fournisseur with dated product lists
-  interface Fournisseur {
-    name: string; // Supplier name
-    datedProductLists: DatedProductList[]; // List of dated product lists for the supplier
-  }
+import {Fournisseur} from "../../types";
+
+
   
   // Create the outer list that holds all fournisseurs
   export const inventory: Fournisseur[] = [

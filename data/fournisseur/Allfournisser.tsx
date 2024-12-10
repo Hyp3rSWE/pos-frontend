@@ -1,11 +1,7 @@
-interface FournisseurRow {
-    Name: string;
-    PhoneNumber: string;
-    Depts: number;
-  }
 
+import {FournisseurRow } from "../types";
 
-  //later on use axios in here
+//later on use axios in here
   export const AllFournisseurData: FournisseurRow[] = [
     {
       Name: "Supplier A",

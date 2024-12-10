@@ -1,15 +1,6 @@
-interface Transaction {
-    date: string;
-    amountPaid: number;
-  }
+import {FournisseurTrans} from "../types/index";
   
-  interface Fournisseur {
-    Name: string;
-    transactions: Transaction[];
-  }
-
-
-  export const fournisseursWithPayments: Fournisseur[] = [
+  export const fournisseursWithPayments: FournisseurTrans[] = [
     {
       Name: "Supplier A",
       transactions: [
@@ -18,6 +9,9 @@ interface Transaction {
         { date: "2024-12-07", amountPaid: 250 },
         { date: "2024-12-10", amountPaid: 300 },
         { date: "2024-12-13", amountPaid: 180 },
+        { date: "2025-12-13", amountPaid: 180 },
+        { date: "2025-12-14", amountPaid: 180 },
+        { date: "2025-12-15", amountPaid: 180 },
       ],
     },
     {

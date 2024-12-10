@@ -6,8 +6,8 @@ import MySidebar from "../../components/sidebar";
 const Home: React.FC = () => {
   const tabs = [
     { label: "Tout", content: <div>All content displayed here</div> },
-    { label: "Rupture stock", content: <div>Out of stock content displayed here</div> },
     { label: "Under threshold", content: <div>Low stock content displayed here</div> },
+    { label: "Rupture stock", content: <div>Out of stock content displayed here</div> },
   ];
 
   return (

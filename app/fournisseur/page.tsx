@@ -1,6 +1,6 @@
 "use client"
 import React from "react";
-import Tabs from "../../components/table/fournisseurTable";
+import Tabs from "../../components/table/allFournisseurTable";
 import MySidebar from "../../components/sidebar";
 
 const Home: React.FC = () => {
