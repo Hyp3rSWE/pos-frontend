@@ -3,7 +3,7 @@ import { clsx } from 'clsx';
 import MybuttonSearch from '../buttonSearch/buttonSearch';
 import { TiDelete } from "react-icons/ti";
 import {ProductRow} from "../../types/index"
-import {CodesProducts} from "../../data/vendre/GetProduct"; //this will probably changes later on...
+import {CodesProducts , getProdById} from "../../data/vendre/GetProduct"; //this will probably changes later on...
 
 
 
@@ -45,8 +45,10 @@ const ProductTable: React.FC = () => {
 
   //looking for the product in the "product codes to add it" if it is already in the invoice just increment by one 
 
-  const handleAddProduct = (productCode: string) => {
-    const newrow : ProductRow | undefined = CodesProducts.find(product => product.code === productCode);
+  const handleAddProduct = async (productCode: string) => {
+    //
+    const newrow : ProductRow | undefined = await getProdById(productCode);
+    //
     const updateRows = [...rows]
     //if item already exists
     const item = updateRows.find(product => product.code === productCode)

@@ -1,4 +1,5 @@
 import {ProductRow} from '../../types/index';
+import axios from 'axios';
 
 //later on this will be changed use the endpoint... GET THE DATA
 export  const AllCodesProducts: ProductRow[] = [
@@ -23,3 +24,20 @@ export  const AllCodesProducts: ProductRow[] = [
     { code: "19", product: "Salt", quantity: 18, unitPrice: 0.2 },
     { code: "20", product: "Oil", quantity: 5, unitPrice: 5.0 }
   ];
+
+  export const getAllProduct = async () =>  {
+    try {
+      var allStockData: ProductRow[];
+      const response = await axios.get("http://localhost:3001/products/");
+      console.log('Data:', response.data);
+      allStockData = response.data.map((product:any)=>({
+        code: product.product_barcode,
+        product: product.product_name,
+        quantity: product.product_stock_level,
+        unitPrice: product.product_price,
+      }))
+      return allStockData;
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }

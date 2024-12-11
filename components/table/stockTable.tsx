@@ -1,11 +1,11 @@
-import React, { useState} from "react";
+import React, { useState , useEffect} from "react";
 import { clsx } from 'clsx';
 import MybuttonSearch from '../buttonSearch/buttonSearch';
 import { TiDelete } from "react-icons/ti";
 import { FaPencilAlt } from "react-icons/fa";
 import { IoIosSave } from "react-icons/io";
 import {ProductRow , TabsProps} from "../../types/index";
-import {AllCodesProducts} from "../../data/stock/allProducts";
+import {getAllProduct} from "../../data/stock/allProducts";
 
 
 
@@ -13,21 +13,38 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
   const [activeTab, setActiveTab] = useState(0);
   const [isEditable, setEditable] = useState(false); //for the quantity
   const [EditIndex, setEditIndex] = useState(-1); //for the quantity as well
-  const [rows, setRows] = useState<ProductRow[]>(AllCodesProducts);//initially display them all
+  const [rows, setRows] = useState<ProductRow[]>();//initially display them all
+  var allProducts :ProductRow[]|undefined ;
   const [AddProductpopup, setAddProductpopup] = useState<boolean>(false); 
   const [DeleteIndex, setDeleteIndex] = useState<number>(-1); 
   const [DeleteProductpopup, setDeleteProductpopup] = useState<boolean>(false); 
   const [AddQuantitypopup, setAddQuantitypopup] = useState<boolean>(false); 
   const [SavePricepopup, setSavePricepopup] = useState<boolean>(false); 
 
+  useEffect( () =>  {
+    console.log("Effect ran on mount");
+    const fetchData = async () => {
+      try {
+        allProducts = await getAllProduct(); // Fetch data
+        console.log(allProducts);
+        setRows(allProducts); 
+        // Update state
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
 
   const handleDeleteRow = (index: number) => {
-    const updatedRows = rows.filter((_, i) => i !== index);
+    const updatedRows = rows?.filter((_, i) => i !== index);
     setRows(updatedRows);
   };
 
   const handlePriceyChange = (index: number, value: number) => {
-    const updatedRows = [...rows];
+    const updatedRows = [...(rows??[])];
     updatedRows[index].unitPrice = value;
     setRows(updatedRows);
   };
@@ -37,25 +54,30 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
       setEditIndex(index)
   }
 
-  const filterReptureStock = () => {
-    const updatedRows = AllCodesProducts.filter(product => product.quantity < 10);
+  const filterReptureStock = async() => {
+    allProducts = await getAllProduct();
+    const updatedRows = allProducts?.filter(product => product.quantity < 10);
     setRows(updatedRows);
   }
 
-  const filterThresholdStock = () => {
-    const updatedRows = AllCodesProducts.filter(product => product.quantity == 0);
+  const filterThresholdStock = async () => {
+    allProducts = await getAllProduct();
+    const updatedRows = allProducts?.filter(product => product.quantity == 0);
     setRows(updatedRows);
   }
-  const NoFilterStock = () => {
-    const updatedRows = AllCodesProducts;
+  const NoFilterStock = async () => {
+    allProducts = await getAllProduct();
+    const updatedRows = allProducts;
+    console.log("no filter: " + allProducts);
     setRows(updatedRows);
   }
 
   //looking for the product in the "product codes to add it"
   //change that one... 
-  const handleSearchProduct = (productName: string) => {
+  const handleSearchProduct = async (productName: string) => {
     const normalizedSearch = productName.trim().toLowerCase();
-    const newrows = AllCodesProducts.filter(product => 
+    allProducts = await getAllProduct();
+    const newrows = allProducts?.filter(product => 
       product.product.toLowerCase().includes(normalizedSearch)
     );
     setRows(newrows);
@@ -243,7 +265,7 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
 <br></br>
 
   
-  {rows.map((row, index) => (
+  {rows?.map((row, index) => (
 
 
     <div key={index} className="text-center flex">
