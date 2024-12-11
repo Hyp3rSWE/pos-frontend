@@ -1,0 +1,195 @@
+/* Container setup */
+.container {
+    height: 100vh;
+    width: 100vw;
+    background-color: #1F2D3D;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Flex layout for the main content */
+.flexDiv {
+    display: flex;
+    flex-direction: row;
+    height: 82%;
+    width: 60%;
+    border-radius: 25px;
+    overflow: hidden;
+    background: rgba(45, 145, 156, 0.42);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(8.6px);
+    -webkit-backdrop-filter: blur(8.6px);
+    border: 1px solid rgba(45, 145, 156, 1);
+}
+
+/* Left side image */
+.image {
+        background-image: url("../../assets/login.png"); 
+
+    flex: 0 0 60%;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    height: 100%;
+}
+
+/* Right side login form */
+.login {
+    flex: 0 0 40%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #f9f9f9;
+    padding: 2rem;
+}
+
+/* Form styling */
+.loginform {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+/* Text container */
+.texts {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+}
+
+/* Title styling */
+.title {
+    font-family: "Poppins", sans-serif;
+    font-size: 24px;
+    color: #333;
+}
+
+/* Subtitle styling */
+.subtitle {
+    color: #595959;
+    font-size: 14px;
+    font-family: "Poppins", sans-serif;
+    margin-top: -0.5vh;
+}
+
+/* Username and password input */
+.username, .password {
+    border: none;
+    border-bottom: 2px solid #9B9B9B;
+    outline: none;
+    background-color: #f9f9f9;
+    margin-bottom: 2rem;
+    padding: 10px 2%;
+    width: 100%;
+    max-width: 300px;
+    height: 3vh;
+    font-size: 17px;
+    font-family: "Poppins", sans-serif;
+}
+
+.username:focus, .password:focus {
+    border-bottom: 2px solid blue;
+}
+
+/* Password visibility toggle */
+.passwordContainer {
+    position: relative;
+    width: 100%;
+    max-width: 300px;
+}
+
+.eyeButton {
+    position: absolute;
+    right: 0;
+    top: 38%;
+    transform: translateY(-87%);
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    height: 40px;
+}
+
+/* Forgot password link */
+.forgotPasswordContainer {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+    margin-top: -10px;
+}
+
+.Forgotpassword {
+    font-size: 16px;
+    font-weight: 400;
+    color: #626262;
+    cursor: pointer;
+    margin-top: 1vh;
+    margin-bottom: 10vh;
+    font-family: "Poppins", sans-serif;
+}
+
+/* Submit button */
+.submitbtn {
+    background-color: #2C3E50;
+    color: #FFFAFA;
+    border-radius: 50px;
+    width: 100%;
+    max-width: 300px;
+    height: 45px;
+    font-size: 18px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    box-shadow: none;
+    font-family: "Poppins", sans-serif;
+    margin-bottom: 2rem;
+}
+
+.submitbtn:active {
+    background-color: #1d2935;
+}
+
+.submitbtn:hover {
+    background-color: #1d2935;
+}
+
+/* Remember Me checkbox */
+.rememberMeContainer {
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+    justify-content: flex-end;
+    width: 100%;
+    margin-bottom: 5vh;
+    margin-left: 1vw;
+    margin-top: -10vh;
+    font-family: "Poppins", sans-serif;
+}
+
+.checkboxLabel {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.checkboxInput {
+    display: none;
+}
+
+.customCheckbox {
+    width: 16px;
+    height: 16px;
+    border: 2px solid #626262;
+    border-radius: 4px;
+    margin-right: 8px;
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+.checkboxInput:checked + .customCheckbox {
+    background-color: #2C3E50;
+    border-color: #2C3E50;
+}
