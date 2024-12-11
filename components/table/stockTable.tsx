@@ -4,65 +4,27 @@ import MybuttonSearch from '../buttonSearch/buttonSearch';
 import { TiDelete } from "react-icons/ti";
 import { FaPencilAlt } from "react-icons/fa";
 import { IoIosSave } from "react-icons/io";
+import {ProductRow , TabsProps} from "../../types/index";
+import {AllCodesProducts} from "../../data/stock/allProducts";
 
-
-interface ProductRow {
-  code: string;
-  product: string;
-  quantity: number;
-  unitPrice: number;
-}
-
-interface Tab {
-  label: string;
-  content: React.ReactNode;
-}
-
-interface TabsProps {
-  tabs: Tab[];
-}
 
 
 const Tabs: React.FC<TabsProps> = ({ tabs }) => {
-
   const [activeTab, setActiveTab] = useState(0);
-  const [isEditable, setEditable] = useState(false);
-  const [EditIndex, setEditIndex] = useState(-1);
+  const [isEditable, setEditable] = useState(false); //for the quantity
+  const [EditIndex, setEditIndex] = useState(-1); //for the quantity as well
+  const [rows, setRows] = useState<ProductRow[]>(AllCodesProducts);//initially display them all
+  const [AddProductpopup, setAddProductpopup] = useState<boolean>(false); 
+  const [DeleteIndex, setDeleteIndex] = useState<number>(-1); 
+  const [DeleteProductpopup, setDeleteProductpopup] = useState<boolean>(false); 
+  const [AddQuantitypopup, setAddQuantitypopup] = useState<boolean>(false); 
+  const [SavePricepopup, setSavePricepopup] = useState<boolean>(false); 
 
-  //use the get All end point later on
-  const specialCodesProducts: ProductRow[] = [
-    { code: "1", product: "Bread", quantity: 10, unitPrice: 1.5 },
-    { code: "2", product: "Eggs", quantity: 12, unitPrice: 0.2 },
-    { code: "3", product: "Milk", quantity: 8, unitPrice: 1.2 },
-    { code: "4", product: "Apples", quantity: 15, unitPrice: 0.5 },
-    { code: "5", product: "Potatoes", quantity: 20, unitPrice: 0.3 },
-    { code: "6", product: "Bananas", quantity: 18, unitPrice: 0.6 },
-    { code: "7", product: "Cheese", quantity: 5, unitPrice: 2.0 },
-    { code: "8", product: "Tomatoes", quantity: 25, unitPrice: 0.4 },
-    { code: "9", product: "Carrots", quantity: 30, unitPrice: 0.2 },
-    { code: "10", product: "Onions", quantity: 22, unitPrice: 0.25 },
-    { code: "11", product: "Chicken", quantity: 7, unitPrice: 3.5 },
-    { code: "12", product: "Fish", quantity: 6, unitPrice: 4.0 },
-    { code: "13", product: "Butter", quantity: 8, unitPrice: 2.5 },
-    { code: "14", product: "Yogurt", quantity: 10, unitPrice: 1.0 },
-    { code: "15", product: "Pasta", quantity: 15, unitPrice: 0.8 },
-    { code: "16", product: "Rice", quantity: 12, unitPrice: 0.7 },
-    { code: "17", product: "Flour", quantity: 20, unitPrice: 0.9 },
-    { code: "18", product: "Sugar", quantity: 25, unitPrice: 0.5 },
-    { code: "19", product: "Salt", quantity: 18, unitPrice: 0.2 },
-    { code: "20", product: "Oil", quantity: 5, unitPrice: 5.0 }
-  ];
-
-  const [rows, setRows] = useState<ProductRow[]>(specialCodesProducts);
-
-
-  
 
   const handleDeleteRow = (index: number) => {
     const updatedRows = rows.filter((_, i) => i !== index);
     setRows(updatedRows);
   };
-
 
   const handlePriceyChange = (index: number, value: number) => {
     const updatedRows = [...rows];
@@ -76,50 +38,149 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
   }
 
   const filterReptureStock = () => {
-    
-    const updatedRows = specialCodesProducts.filter(product => product.quantity < 10);
+    const updatedRows = AllCodesProducts.filter(product => product.quantity < 10);
     setRows(updatedRows);
   }
 
   const filterThresholdStock = () => {
-    const updatedRows = specialCodesProducts.filter(product => product.quantity == 0);
+    const updatedRows = AllCodesProducts.filter(product => product.quantity == 0);
     setRows(updatedRows);
   }
   const NoFilterStock = () => {
-    const updatedRows = specialCodesProducts;
+    const updatedRows = AllCodesProducts;
     setRows(updatedRows);
   }
 
-  //looking for the product in the "special codes to add it"
+  //looking for the product in the "product codes to add it"
   //change that one... 
   const handleSearchProduct = (productName: string) => {
     const normalizedSearch = productName.trim().toLowerCase();
-    const newrows = specialCodesProducts.filter(product => 
+    const newrows = AllCodesProducts.filter(product => 
       product.product.toLowerCase().includes(normalizedSearch)
     );
     setRows(newrows);
   };
 
-
-  
-
   return (
     
     <div className="w-full">
+{//the pop up of adding a product
+}
+<div className={clsx('',
+        AddProductpopup && "fixed inset-0 bg-black bg-opacity-50 items-center z-50 flex justify-center align-middle"
+      )}>
+        <div className="w-1/2 bg-white rounded-2xl flex-col">
 
+          <div className={clsx("text-center text-4xl p-3 ",!AddProductpopup && "hidden")}
+          >Please enter the information of the added product</div>
 
-    {
-        //add manually field change it to add quantity... and add product
-    }
+          <div className={clsx("p-5 w-full",!AddProductpopup&&"hidden")}>
+            <div className="w-full flex justify-evenly"><div className="m-1 text-2xl w-1/2">Product Code:</div><input type="text" className="m-1 border-2 border-gray-300 rounded-lg p-0.5 w-1/2"/></div>
+            <div className="w-full flex justify-evenly"><div className="m-1 text-2xl w-1/2">Product Name:</div><input type="text" className="m-1 border-2 border-gray-300 rounded-lg p-0.5 w-1/2"/></div>
+            <div className="w-full flex justify-evenly"><div className="m-1 text-2xl w-1/2">Product quantity:</div><input type="text" className="m-1 border-2 border-gray-300 rounded-lg p-0.5 w-1/2"/></div>
+            <div className="w-full flex justify-evenly"><div className="m-1 text-2xl w-1/2">Product unit price:</div><input type="text" className="m-1 border-2 border-gray-300 rounded-lg p-0.5 w-1/2"/></div>
+
+          </div>
+
+          <div className="flex justify-center p-3">
+            <button className={clsx("bg-[#BEE7DB] hover:bg-[#5CC3A4] px-4 py-2 rounded-2xl focus:outline-none focus:ring-2 focus:ring-offset-1 m-1",
+            !AddProductpopup&&"hidden"
+            )}
+            
+             onClick={()=>setAddProductpopup(false)}>Add</button>
+            <button className={clsx("bg-[#BEE7DB] hover:bg-[#5CC3A4] px-4 py-2 rounded-2xl focus:outline-none focus:ring-2 focus:ring-offset-1 m-1",
+            !AddProductpopup&&"hidden")} onClick={()=>setAddProductpopup(false)}>Cancel</button>
+          </div>
+        </div>
+      </div>
+
+{//the pop up of adding a quantity
+}
+<div className={clsx('',
+        AddQuantitypopup && "fixed inset-0 bg-black bg-opacity-50 items-center z-50 flex justify-center align-middle"
+      )}>
+        <div className="w-1/2 bg-white rounded-2xl flex-col">
+
+          <div className={clsx("text-center text-4xl p-3 ",!AddQuantitypopup && "hidden")}
+          >Please enter the quantity of the product you want to add</div>
+
+          <div className={clsx("p-5 w-full",!AddQuantitypopup&&"hidden")}>
+          <div className="w-full flex justify-evenly"><div className="m-1 text-2xl w-1/2">Product quantity:</div><input type="text" className="m-1 border-2 border-gray-300 rounded-lg p-0.5 w-1/2"/></div>
+          <div className="w-full flex justify-evenly"><div className="m-1 text-2xl w-1/2">Product code:</div><input type="text" className="m-1 border-2 border-gray-300 rounded-lg p-0.5 w-1/2"/></div>
+          </div>
+
+          <div className="flex justify-center p-3">
+            <button className={clsx("bg-[#BEE7DB] hover:bg-[#5CC3A4] px-4 py-2 rounded-2xl focus:outline-none focus:ring-2 focus:ring-offset-1 m-1",
+            !AddQuantitypopup&&"hidden")}
+             onClick={()=>setAddQuantitypopup(false)}>Add</button>
+            <button className={clsx("bg-[#BEE7DB] hover:bg-[#5CC3A4] px-4 py-2 rounded-2xl focus:outline-none focus:ring-2 focus:ring-offset-1 m-1",
+            !AddQuantitypopup&&"hidden")} onClick={()=>setAddQuantitypopup(false)}>Cancel</button>
+          </div>
+        </div>
+      </div>
+
+{//the pop up of saving the price
+}
+<div className={clsx('',
+        SavePricepopup && "fixed inset-0 bg-black bg-opacity-50 items-center z-50 flex justify-center align-middle"
+      )}>
+        <div className="w-1/2 bg-white rounded-2xl flex-col">
+
+          <div className={clsx("text-center text-4xl p-3 ",!SavePricepopup && "hidden")}
+          >Are you sure you want to perform this operation ?</div>
+          <div className={clsx("p-5 w-full",!AddQuantitypopup&&"hidden")}>
+          </div>
+
+          <div className="flex justify-center p-3">
+            <button className={clsx("bg-[#BEE7DB] hover:bg-[#5CC3A4] px-4 py-2 rounded-2xl focus:outline-none focus:ring-2 focus:ring-offset-1 m-1",
+            !SavePricepopup&&"hidden")}
+             onClick={()=>setSavePricepopup(false)}>Yes</button>
+            <button className={clsx("bg-[#BEE7DB] hover:bg-[#5CC3A4] px-4 py-2 rounded-2xl focus:outline-none focus:ring-2 focus:ring-offset-1 m-1",
+            !SavePricepopup&&"hidden")} onClick={()=>setSavePricepopup(false)}>Cancel</button>
+          </div>
+        </div>
+      </div>
+
+{//the pop up of deleting the record
+}
+<div className={clsx('',
+        DeleteProductpopup && "fixed inset-0 bg-black bg-opacity-50 items-center z-50 flex justify-center align-middle"
+      )}>
+        <div className="w-1/2 bg-white rounded-2xl flex-col">
+
+          <div className={clsx("text-center text-4xl p-3 ",!DeleteProductpopup && "hidden")}
+          >Are you sure you want to delete this product ?</div>
+          <div className={clsx("p-5 w-full",!DeleteProductpopup&&"hidden")}>
+          </div>
+          <div className="flex justify-center p-3">
+            <button className={clsx("bg-[#BEE7DB] hover:bg-[#5CC3A4] px-4 py-2 rounded-2xl focus:outline-none focus:ring-2 focus:ring-offset-1 m-1",
+            !DeleteProductpopup&&"hidden")}
+             onClick={()=>{setDeleteProductpopup(false)
+              handleDeleteRow(DeleteIndex)
+             }}>Yes</button>
+            <button className={clsx("bg-[#BEE7DB] hover:bg-[#5CC3A4] px-4 py-2 rounded-2xl focus:outline-none focus:ring-2 focus:ring-offset-1 m-1",
+            !DeleteProductpopup&&"hidden")} onClick={()=>{setDeleteProductpopup(false)
+              setDeleteIndex(-1)}}>Cancel</button>
+          </div>
+        </div>
+      </div>
+    <div>
+    <div className="flex justify-end items-center mr-4 -mt-10">
+         <span className="text-6xl font-bold mr-10">Totale Stock:</span>
+         <span className="text-6xl font-bold bg-[#BEE7DB] text-black px-4 py-2 rounded-2xl">
+    {-1}
+         </span>
+        </div>
     <div className="flex justify-between w-full p-4">
       <div>
       <button
         className="bg-[#BEE7DB] hover:bg-[#5CC3A4] px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-1 m-1"
-      >
+        onClick={()=>setAddProductpopup(true)}>
         add product
       </button>
       <button
         className="bg-[#BEE7DB] hover:bg-[#5CC3A4] px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-1 m-1"
+        onClick={()=>setAddQuantitypopup(true)}
       >add quantity
         </button>   
       </div>
@@ -127,7 +188,7 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
         onButtonClick={handleSearchProduct}
         Downkey="Enter"
         />
-    </div>
+    </div></div>
 
       {/* Tabs Navigation */}
       <div className="flex space-x-6 border-b border-gray-300 p-4">
@@ -218,9 +279,6 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
           ></input>:
           row.unitPrice
         }
-        
-        
-        
         </div>
 
       {
@@ -229,14 +287,16 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
       <div className="basis-1/5 flex align-middle justify-center h-8">
         <div className="flex justify-center content-evenly">
         <button
-          onClick={() => handleDeleteRow(index)}
+          onClick={() => {setDeleteProductpopup(true) 
+            setDeleteIndex(index)}}
           className="text-white px-2 py-1 rounded"
         >
           <TiDelete className="text-red-500 text-3xl hover:text-red-800"></TiDelete>
         </button>
 
         <button
-          onClick={() => handleEditPrice(index)}
+          onClick={()=>{handleEditPrice(index);
+            (isEditable && index == EditIndex)?setSavePricepopup(true):()=>{}}}
           className="text-white px-2 py-1 rounded"
         >
           {isEditable && index == EditIndex?
@@ -255,15 +315,8 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
   ))}  
 
 
+                                      </div>       
 </div>
-</div>
-
-
-
-
-
-
-
     </div>
   );
 };

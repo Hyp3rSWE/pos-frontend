@@ -1,10 +1,20 @@
+"use client"
+import React from "react";
+import Tabs from "../../components/table/allFournisseurTable";
 import MySidebar from "../../components/sidebar";
 
-export default function Fournisseur() {
-    return (
-        <div>
-            <MySidebar></MySidebar>
-            <h1 className="m-80">this is the Fournisseur page!!</h1>
-        </div>
-    );
-  }
+const Home: React.FC = () => {
+  const tabs = [
+    { label: "History of products", content: <div></div> },
+    { label: "History of payement", content: <div></div> },
+  ];
+
+  return (
+    <div className="flex justify-center h-screen">
+      <MySidebar />
+      <div className="ml-48 w-full"><Tabs tabs={tabs}/></div>
+    </div>
+  );
+};
+
+export default Home;

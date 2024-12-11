@@ -31,7 +31,7 @@ const Sidebar: React.FC = () => {
             label: "Historique",
         },
         {
-            href: "/param",
+            href: "/login",
             icon: IoSettingsSharp,
             label: "Paramètre",
         },
