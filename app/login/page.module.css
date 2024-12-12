@@ -117,19 +117,20 @@
 /* Forgot password link */
 .forgotPasswordContainer {
     display: flex;
-    justify-content: flex-end;
+    justify-content: center;
     width: 100%;
     margin-top: -10px;
+    
 }
 
 .Forgotpassword {
     font-size: 16px;
-    font-weight: 400;
+    font-weight: 500;
     color: #626262;
-    cursor: pointer;
     margin-top: 1vh;
-    margin-bottom: 10vh;
+    margin-bottom: 5vh;
     font-family: "Poppins", sans-serif;
+    color: rgb(209, 11, 11);
 }
 
 /* Submit button */
@@ -164,9 +165,9 @@
     align-items: center;
     justify-content: flex-end;
     width: 100%;
-    margin-bottom: 5vh;
-    margin-left: 1vw;
-    margin-top: -10vh;
+    margin-bottom: 1vh;
+    margin-left: 6vw;
+    
     font-family: "Poppins", sans-serif;
 }
 
@@ -193,3 +194,6 @@
     background-color: #2C3E50;
     border-color: #2C3E50;
 }
+
+
+
