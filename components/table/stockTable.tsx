@@ -1,11 +1,11 @@
-import React, { useState , useEffect} from "react";
+import React, { useState , useEffect , useRef} from "react";
 import { clsx } from 'clsx';
 import MybuttonSearch from '../buttonSearch/buttonSearch';
 import { TiDelete } from "react-icons/ti";
 import { FaPencilAlt } from "react-icons/fa";
 import { IoIosSave } from "react-icons/io";
 import {ProductRow , TabsProps} from "../../types/index";
-import {getAllProduct} from "../../data/stock/allProducts";
+import {getAllProduct , handleaddProduct , DeleteProduct} from "../../data/stock/allProducts";
 
 
 
@@ -16,10 +16,11 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
   const [rows, setRows] = useState<ProductRow[]>();//initially display them all
   var allProducts :ProductRow[]|undefined ;
   const [AddProductpopup, setAddProductpopup] = useState<boolean>(false); 
-  const [DeleteIndex, setDeleteIndex] = useState<number>(-1); 
+  const [DeleteID, setDeleteID] = useState<string>(""); 
   const [DeleteProductpopup, setDeleteProductpopup] = useState<boolean>(false); 
   const [AddQuantitypopup, setAddQuantitypopup] = useState<boolean>(false); 
   const [SavePricepopup, setSavePricepopup] = useState<boolean>(false); 
+  const formRefAddProduct = useRef(null);
 
   useEffect( () =>  {
     console.log("Effect ran on mount");
@@ -38,8 +39,9 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
   }, []);
 
 
-  const handleDeleteRow = (index: number) => {
-    const updatedRows = rows?.filter((_, i) => i !== index);
+  const handleDeleteRow = async (ID: string) => {
+    await DeleteProduct(ID);
+    const updatedRows = rows
     setRows(updatedRows);
   };
 
@@ -91,16 +93,17 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
 <div className={clsx('',
         AddProductpopup && "fixed inset-0 bg-black bg-opacity-50 items-center z-50 flex justify-center align-middle"
       )}>
+        <form  ref={formRefAddProduct} onSubmit={()=>{handleaddProduct(formRefAddProduct)}}>
         <div className="w-1/2 bg-white rounded-2xl flex-col">
 
           <div className={clsx("text-center text-4xl p-3 ",!AddProductpopup && "hidden")}
           >Please enter the information of the added product</div>
 
           <div className={clsx("p-5 w-full",!AddProductpopup&&"hidden")}>
-            <div className="w-full flex justify-evenly"><div className="m-1 text-2xl w-1/2">Product Code:</div><input type="text" className="m-1 border-2 border-gray-300 rounded-lg p-0.5 w-1/2"/></div>
-            <div className="w-full flex justify-evenly"><div className="m-1 text-2xl w-1/2">Product Name:</div><input type="text" className="m-1 border-2 border-gray-300 rounded-lg p-0.5 w-1/2"/></div>
-            <div className="w-full flex justify-evenly"><div className="m-1 text-2xl w-1/2">Product quantity:</div><input type="text" className="m-1 border-2 border-gray-300 rounded-lg p-0.5 w-1/2"/></div>
-            <div className="w-full flex justify-evenly"><div className="m-1 text-2xl w-1/2">Product unit price:</div><input type="text" className="m-1 border-2 border-gray-300 rounded-lg p-0.5 w-1/2"/></div>
+            <div className="w-full flex justify-evenly"><div className="m-1 text-2xl w-1/2">Product Code:</div><input name = "product_barcode" type="text" className="m-1 border-2 border-gray-300 rounded-lg p-0.5 w-1/2"/></div>
+            <div className="w-full flex justify-evenly"><div className="m-1 text-2xl w-1/2">Product Name:</div><input name="product_name" type="text" className="m-1 border-2 border-gray-300 rounded-lg p-0.5 w-1/2"/></div>
+            <div className="w-full flex justify-evenly"><div className="m-1 text-2xl w-1/2">Product quantity:</div><input name="product_stock_level"type="text" className="m-1 border-2 border-gray-300 rounded-lg p-0.5 w-1/2"/></div>
+            <div className="w-full flex justify-evenly"><div className="m-1 text-2xl w-1/2">Product unit price:</div><input name = "product_price" type="text" className="m-1 border-2 border-gray-300 rounded-lg p-0.5 w-1/2"/></div>
 
           </div>
 
@@ -109,11 +112,14 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
             !AddProductpopup&&"hidden"
             )}
             
-             onClick={()=>setAddProductpopup(false)}>Add</button>
+             onClick={()=>setAddProductpopup(false)} type="submit">Add</button>
             <button className={clsx("bg-[#BEE7DB] hover:bg-[#5CC3A4] px-4 py-2 rounded-2xl focus:outline-none focus:ring-2 focus:ring-offset-1 m-1",
-            !AddProductpopup&&"hidden")} onClick={()=>setAddProductpopup(false)}>Cancel</button>
+            !AddProductpopup&&"hidden")} onClick={(e)=>{setAddProductpopup(false);
+              e.preventDefault();}
+            }>Cancel</button>
           </div>
         </div>
+        </form>
       </div>
 
 {//the pop up of adding a quantity
@@ -168,23 +174,28 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
 <div className={clsx('',
         DeleteProductpopup && "fixed inset-0 bg-black bg-opacity-50 items-center z-50 flex justify-center align-middle"
       )}>
-        <div className="w-1/2 bg-white rounded-2xl flex-col">
 
-          <div className={clsx("text-center text-4xl p-3 ",!DeleteProductpopup && "hidden")}
-          >Are you sure you want to delete this product ?</div>
-          <div className={clsx("p-5 w-full",!DeleteProductpopup&&"hidden")}>
-          </div>
-          <div className="flex justify-center p-3">
-            <button className={clsx("bg-[#BEE7DB] hover:bg-[#5CC3A4] px-4 py-2 rounded-2xl focus:outline-none focus:ring-2 focus:ring-offset-1 m-1",
-            !DeleteProductpopup&&"hidden")}
-             onClick={()=>{setDeleteProductpopup(false)
-              handleDeleteRow(DeleteIndex)
-             }}>Yes</button>
-            <button className={clsx("bg-[#BEE7DB] hover:bg-[#5CC3A4] px-4 py-2 rounded-2xl focus:outline-none focus:ring-2 focus:ring-offset-1 m-1",
-            !DeleteProductpopup&&"hidden")} onClick={()=>{setDeleteProductpopup(false)
-              setDeleteIndex(-1)}}>Cancel</button>
-          </div>
-        </div>
+      <div className="w-1/2 bg-white rounded-2xl flex-col">
+
+<div className={clsx("text-center text-4xl p-3 ",!DeleteProductpopup && "hidden")}
+>Are you sure you want to delete this product ?</div>
+<div className={clsx("p-5 w-full",!DeleteProductpopup&&"hidden")}>
+</div>
+<div className="flex justify-center p-3">
+  <button className={clsx("bg-[#BEE7DB] hover:bg-[#5CC3A4] px-4 py-2 rounded-2xl focus:outline-none focus:ring-2 focus:ring-offset-1 m-1",
+  !DeleteProductpopup&&"hidden")}
+   onClick={()=>{setDeleteProductpopup(false)
+    handleDeleteRow(DeleteID)
+   }}>Yes</button>
+  <button className={clsx("bg-[#BEE7DB] hover:bg-[#5CC3A4] px-4 py-2 rounded-2xl focus:outline-none focus:ring-2 focus:ring-offset-1 m-1",
+  !DeleteProductpopup&&"hidden")} onClick={()=>{setDeleteProductpopup(false)
+    setDeleteID("")}}>Cancel</button>
+</div>
+</div>
+
+    
+
+
       </div>
     <div>
     <div className="flex justify-end items-center mr-4 -mt-10">
@@ -310,7 +321,7 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
         <div className="flex justify-center content-evenly">
         <button
           onClick={() => {setDeleteProductpopup(true) 
-            setDeleteIndex(index)}}
+            setDeleteID(row.productid)}}
           className="text-white px-2 py-1 rounded"
         >
           <TiDelete className="text-red-500 text-3xl hover:text-red-800"></TiDelete>

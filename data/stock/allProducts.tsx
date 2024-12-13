@@ -1,29 +1,7 @@
 import {ProductRow} from '../../types/index';
 import axios from 'axios';
 
-//later on this will be changed use the endpoint... GET THE DATA
-export  const AllCodesProducts: ProductRow[] = [
-    { code: "1", product: "Bread", quantity: 10, unitPrice: 1.5 },
-    { code: "2", product: "Eggs", quantity: 12, unitPrice: 0.2 },
-    { code: "3", product: "Milk", quantity: 8, unitPrice: 1.2 },
-    { code: "4", product: "Apples", quantity: 15, unitPrice: 0.5 },
-    { code: "5", product: "Potatoes", quantity: 20, unitPrice: 0.3 },
-    { code: "6", product: "Bananas", quantity: 18, unitPrice: 0.6 },
-    { code: "7", product: "Cheese", quantity: 5, unitPrice: 2.0 },
-    { code: "8", product: "Tomatoes", quantity: 25, unitPrice: 0.4 },
-    { code: "9", product: "Carrots", quantity: 30, unitPrice: 0.2 },
-    { code: "10", product: "Onions", quantity: 22, unitPrice: 0.25 },
-    { code: "11", product: "Chicken", quantity: 7, unitPrice: 3.5 },
-    { code: "12", product: "Fish", quantity: 6, unitPrice: 4.0 },
-    { code: "13", product: "Butter", quantity: 8, unitPrice: 2.5 },
-    { code: "14", product: "Yogurt", quantity: 10, unitPrice: 1.0 },
-    { code: "15", product: "Pasta", quantity: 15, unitPrice: 0.8 },
-    { code: "16", product: "Rice", quantity: 12, unitPrice: 0.7 },
-    { code: "17", product: "Flour", quantity: 20, unitPrice: 0.9 },
-    { code: "18", product: "Sugar", quantity: 25, unitPrice: 0.5 },
-    { code: "19", product: "Salt", quantity: 18, unitPrice: 0.2 },
-    { code: "20", product: "Oil", quantity: 5, unitPrice: 5.0 }
-  ];
+
 
   export const getAllProduct = async () =>  {
     try {
@@ -35,9 +13,50 @@ export  const AllCodesProducts: ProductRow[] = [
         product: product.product_name,
         quantity: product.product_stock_level,
         unitPrice: product.product_price,
+        productid: product.product_id
       }))
       return allStockData;
     } catch (error) {
       console.error('Error:', error);
+    }
+  }
+
+  export   const handleaddProduct = async (formRef:any) => {
+    console.log('CALLED');
+    // Collect all form data
+    const formData = new FormData(formRef.current);
+    var data = Object.fromEntries(formData.entries());
+
+    //because I'm forced to give the ID correct it in next sprint
+    data.supplier_id = "1";
+
+    console.log('Form data:', data);
+
+    // Send the form data in a POST request
+    
+    try {
+      const response = await fetch('http://localhost:3001/products', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      const result = await response.json();
+      console.log(result);
+    } catch (error) {
+      console.error('Error submitting form:', error);
+    }
+      
+  };
+
+  export const DeleteProduct = async (productId : string) => {
+    try {
+      const response = await axios.delete(`http://localhost:3001/products/${productId}`);
+      console.log('Product deleted successfully:', response.data);
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.error('Error deleting product:', error.message);
+      } else {
+        console.error('Unexpected error:', error);
+      }
     }
   }

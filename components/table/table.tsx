@@ -3,7 +3,7 @@ import { clsx } from 'clsx';
 import MybuttonSearch from '../buttonSearch/buttonSearch';
 import { TiDelete } from "react-icons/ti";
 import {ProductRow} from "../../types/index"
-import {CodesProducts , getProdById} from "../../data/vendre/GetProduct"; //this will probably changes later on...
+import {getProdByCode} from "../../data/vendre/GetProduct"; //this will probably changes later on...
 
 
 
@@ -47,7 +47,7 @@ const ProductTable: React.FC = () => {
 
   const handleAddProduct = async (productCode: string) => {
     //
-    const newrow : ProductRow | undefined = await getProdById(productCode);
+    const newrow : ProductRow | undefined = await getProdByCode(productCode);
     //
     const updateRows = [...rows]
     //if item already exists
