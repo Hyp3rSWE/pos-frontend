@@ -1,13 +1,17 @@
 "use client";
 import { useState } from 'react';
-import { FaLock ,FaUnlock} from 'react-icons/fa';
+import { useRouter } from 'next/navigation'; 
+import { FaLock, FaUnlock } from 'react-icons/fa';
 import styles from "./page.module.css";
+import axios from 'axios';
 
 const Login = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [rememberMe, setRememberMe] = useState(false);
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [warning, setWarning] = useState('');
+    const router = useRouter();
 
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
@@ -17,6 +21,29 @@ const Login = () => {
         setRememberMe(!rememberMe);
     };
 
+    const loginUser = async () => {
+        try {
+            const response = await axios.post('http://localhost:3001/users/login', {
+                user_name: username,
+                user_pass: password,
+            });
+            console.log('Response:', response.data);
+    
+            if (response.status === 200) {
+                router.push('/fournisseur'); 
+            }
+        } catch (error) {
+            if (error.response && error.response.status === 404) {
+                console.error('Error:', error.response.data.error); 
+                setWarning("Username or password incorrect");
+            } else {
+                console.error('Unexpected Error:', error.message);
+                setWarning("An unexpected error occurred. Please try again.");
+            }
+        }
+    };
+    
+
     return (
         <div className={styles.container}>
             <div className={styles.flexDiv}>
@@ -24,14 +51,22 @@ const Login = () => {
                 <div className={styles.login}>
                     <div className={styles.texts}>
                         <h1 className={styles.title}>Admin Login</h1>
-                        <h4 className={styles.subtitle}>Sign in to access the Network Management Dashboard</h4>
+                        <h4 className={styles.subtitle}>
+                            Sign in to access the Network Management Dashboard
+                        </h4>
                     </div>
 
-                    <form className={styles.loginform}>
+                    <form
+                        className={styles.loginform}
+                        onSubmit={(e) => {
+                            e.preventDefault();
+                            loginUser();
+                        }}
+                    >
                         <input
                             className={styles.username}
                             type="text"
-                            placeholder='Username'
+                            placeholder="Username"
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
                             required
@@ -58,11 +93,6 @@ const Login = () => {
                             </button>
                         </div>
 
-
-                        <div className={styles.forgotPasswordContainer}>
-                            <h1 className={styles.Forgotpassword}></h1>
-                        </div>
-
                         <div className={styles.rememberMeContainer}>
                             <label className={styles.checkboxLabel}>
                                 <input
@@ -75,8 +105,12 @@ const Login = () => {
                                 Remember Me
                             </label>
                         </div>
+                        <div className={styles.forgotPasswordContainer}>
+                            <h1 className={styles.Forgotpassword}>{warning}</h1>
+                        </div>
 
-                        <button className={styles.submitbtn}>
+
+                        <button type="submit" className={styles.submitbtn}>
                             Log in
                         </button>
                     </form>
@@ -84,6 +118,6 @@ const Login = () => {
             </div>
         </div>
     );
-}
+};
 
 export default Login;
