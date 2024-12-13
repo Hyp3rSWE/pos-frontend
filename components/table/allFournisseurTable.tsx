@@ -1,7 +1,7 @@
-import React, { useState} from "react";
+import React, { useState , useRef} from "react";
 import { clsx } from 'clsx';
 import MybuttonSearch from '../buttonSearch/buttonSearch';
-import {AllFournisseurData} from "../../data/fournisseur/Allfournisser";
+import {AllFournisseurData , handleaddFournisseur} from "../../data/fournisseur/Allfournisser";
 import { inventory } from "@/data/fournisseur/fournisseur";
 import {fournisseursWithPayments} from "@/data/fournisseur/payement";
 import {TabsProps , FournisseurRow , DatedProductList , Transaction} from "../../types/index";
@@ -18,6 +18,12 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
   const [rowsFournisseurPayement, setRowsFournisseurPayement] = useState<Transaction[]>();
   //used for to navigate between many fournisseurs and one fournisseur
   const [isFournisseur , setFournisseur] = useState<Boolean>(false);
+  // used to display and remove the pop up
+  const [displayAddFournisseur , setdisplayAddFournisseur ] = useState<Boolean>(false);
+  const [displayAddPayement , setdisplayAddPayement ] = useState<Boolean>(false);
+  const formRefAddFournisseur = useRef(null);
+  const formRefAddPayement = useRef(null);
+
 
 
     const totalDepts = rows.reduce((sum, row) => sum + row.Depts , 0);//all fournisseur depts
@@ -28,6 +34,45 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
             {//the total depts text field
             }
         <div className="flex justify-end items-center mb-4">
+          {
+            //add fournisseur pop up
+          }
+        <div className={clsx('',
+                "fixed inset-0 bg-black bg-opacity-50 items-center z-50 flex justify-center",
+                !displayAddFournisseur && "hidden"
+              )}>
+                <form  ref = {formRefAddFournisseur}
+                onSubmit={()=>{}} className="flex justify-center items-center w-full">
+                <div className="w-1/2 bg-white rounded-2xl flex-col">
+        
+                  <div className={clsx("text-center text-4xl p-3 ",!displayAddFournisseur && "hidden")}
+                  >Please enter the information of the added fournisseur</div>
+        
+                  <div className={clsx("p-5 w-full",!displayAddFournisseur && "hidden")}>
+                    <div className="w-full flex justify-evenly"><div className="m-1 text-2xl w-1/2">Fournisseur Name:</div><input name="supplier_name" type="text" className="m-1 border-2 border-gray-300 rounded-lg p-0.5 w-1/2"/></div>
+                    <div className="w-full flex justify-evenly"><div className="m-1 text-2xl w-1/2">Fournisseur phone number:</div><input name="supplier_phone"type="text" className="m-1 border-2 border-gray-300 rounded-lg p-0.5 w-1/2"/></div>
+                    <div className="w-full flex justify-evenly"><div className="m-1 text-2xl w-1/2">Depts:</div><input name = "supplier_debt" type="text" className="m-1 border-2 border-gray-300 rounded-lg p-0.5 w-1/2"/></div>
+        
+                  </div>
+        
+                  <div className="flex justify-center p-3">
+                    <button className={clsx("bg-[#BEE7DB] hover:bg-[#5CC3A4] px-4 py-2 rounded-2xl focus:outline-none focus:ring-2 focus:ring-offset-1 m-1",
+                    !displayAddFournisseur && "hidden"
+                    )}
+                    
+                     onClick={()=>{
+                      handleaddFournisseur(formRefAddFournisseur);
+                     }} type="submit">Add</button>
+                    <button className={clsx("bg-[#BEE7DB] hover:bg-[#5CC3A4] px-4 py-2 rounded-2xl focus:outline-none focus:ring-2 focus:ring-offset-1 m-1",
+                    !displayAddFournisseur && "hidden")} onClick={(e)=>{
+                      e.preventDefault();
+                      setdisplayAddFournisseur(false);
+
+                    }}>Cancel</button>
+                  </div>
+                </div>
+                </form>
+              </div>
          <span className="text-6xl font-bold mr-10">Total depts:</span>
          <span className="text-6xl font-bold bg-[#BEE7DB] text-black px-4 py-2 rounded-2xl">
             {totalDepts.toFixed(2)}
@@ -40,6 +85,9 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
               <div>
               <button
                 className="bg-[#BEE7DB] hover:bg-[#5CC3A4] px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-1 m-1"
+                onClick={()=>{
+                  setdisplayAddFournisseur(true);
+                }}
               >
                 add fournisseur
               </button> 
@@ -105,6 +153,41 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
       rows.reduce((sum, row) => sum + row.Depts , 0);//all fournisseur depts
         return (
             <div className="w-full p-4">
+          {
+            //add payement pop up
+          }
+        <div className={clsx('',
+                "fixed inset-0 bg-black bg-opacity-50 items-center z-50 flex justify-center",
+                !displayAddPayement && "hidden"
+              )}>
+                <form  ref = {formRefAddPayement}
+                onSubmit={()=>{}} className="flex justify-center items-center w-full">
+                <div className="w-1/2 bg-white rounded-2xl flex-col">
+        
+                  <div className={clsx("text-center text-4xl p-3 ",!displayAddPayement && "hidden")}
+                  >Please enter the information of the payement</div>
+        
+                  <div className={clsx("p-5 w-full",!displayAddPayement && "hidden")}>
+                    <div className="w-full flex justify-evenly"><div className="m-1 text-2xl w-1/2">Amount:</div><input name="supplier_name" type="text" className="m-1 border-2 border-gray-300 rounded-lg p-0.5 w-1/2"/></div>        
+                  </div>
+        
+                  <div className="flex justify-center p-3">
+                    <button className={clsx("bg-[#BEE7DB] hover:bg-[#5CC3A4] px-4 py-2 rounded-2xl focus:outline-none focus:ring-2 focus:ring-offset-1 m-1",
+                    !displayAddPayement && "hidden"
+                    )}
+                    
+                     onClick={()=>{
+                      handleaddFournisseur(formRefAddFournisseur);
+                     }} type="submit">Add</button>
+                    <button className={clsx("bg-[#BEE7DB] hover:bg-[#5CC3A4] px-4 py-2 rounded-2xl focus:outline-none focus:ring-2 focus:ring-offset-1 m-1",
+                    !displayAddPayement && "hidden")} onClick={(e)=>{
+                      e.preventDefault();
+                      setdisplayAddPayement(false);
+                    }}>Cancel</button>
+                  </div>
+                </div>
+                </form>
+              </div>
         {//the total depts for that fournisseur text field
         }
         <div className="flex justify-end items-center mb-4">
@@ -245,7 +328,9 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
           <div className="flex w-full justify-end">
               <button
                 className="bg-[#BEE7DB] hover:bg-[#5CC3A4] px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-1 m-1 mb-2"
-                onClick={()=>{}}
+                onClick={()=>{
+                  setdisplayAddPayement(true);
+                }}
               >
                 Add Payement
               </button> 
