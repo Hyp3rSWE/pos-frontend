@@ -16,7 +16,7 @@ const Sidebar: React.FC = () => {
 
     const links = [
         {
-            href: "/",
+            href: "/vendre",
             icon: MdOutlineAttachMoney,
             label: "Vendre",
         },
@@ -36,7 +36,7 @@ const Sidebar: React.FC = () => {
             label: "Historique",
         },
         {
-            href: "/login",
+            href: "/param",
             icon: IoSettingsSharp,
             label: "Paramètre",
         },

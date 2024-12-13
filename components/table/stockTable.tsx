@@ -94,7 +94,7 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
 <div className={clsx('',
         AddProductpopup && "fixed inset-0 bg-black bg-opacity-50 items-center z-50 flex justify-center align-middle"
       )}>
-        <form  ref={formRefAddProduct} onSubmit={()=>{handleaddProduct(formRefAddProduct)}}>
+        <form  ref={formRefAddProduct} onSubmit={()=>{handleaddProduct(formRefAddProduct)}} className="flex justify-center items-center">
         <div className="w-1/2 bg-white rounded-2xl flex-col">
 
           <div className={clsx("text-center text-4xl p-3 ",!AddProductpopup && "hidden")}
