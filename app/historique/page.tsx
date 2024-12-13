@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import MySidebar from "../../components/sidebar";
 import MybuttonSearch from "../../components/buttonSearch/buttonSearch";
 import Dropdown from "../../components/dropDown";
+import axios from "axios";
 
 interface ProductRow {
   code: string;
@@ -14,29 +15,47 @@ interface ProductRow {
 
 export default function History() {
   const [rows, setRows] = useState<ProductRow[]>([
-    { code: "1", product: "Bread", quantity: 10, unitPrice: 15, timestamp: "2024-12-11" },
-    { code: "1", product: "Bread", quantity: 10, unitPrice: 15, timestamp: "2024-12-11" },
-    { code: "1", product: "Bread", quantity: 10, unitPrice: 15, timestamp: "2024-12-11" },
-    { code: "1", product: "Bread", quantity: 10, unitPrice: 15, timestamp: "2024-12-11" },
-    { code: "1", product: "Bread", quantity: 10, unitPrice: 15, timestamp: "2024-12-11" },
-    { code: "1", product: "Bread", quantity: 10, unitPrice: 15, timestamp: "2024-12-11" },
-    { code: "1", product: "Bread", quantity: 10, unitPrice: 15, timestamp: "2024-12-11" },
-    { code: "1", product: "Bread", quantity: 10, unitPrice: 15, timestamp: "2024-12-11" },
-    { code: "2", product: "Milk", quantity: 8, unitPrice: 12, timestamp: "2024-12-11" },
-    { code: "2", product: "Milk", quantity: 8, unitPrice: 12, timestamp: "2024-12-11" },
-    { code: "2", product: "Milk", quantity: 8, unitPrice: 12, timestamp: "2024-12-11" },
-    { code: "3", product: "Eggs", quantity: 12, unitPrice: 20, timestamp: "2024-12-12" },
-    { code: "4", product: "Eggs", quantity: 12, unitPrice: 20, timestamp: "2024-12-12" },
-    { code: "5", product: "Eggs", quantity: 12, unitPrice: 20, timestamp: "2024-12-13" },
-    { code: "5", product: "Eggs", quantity: 12, unitPrice: 20, timestamp: "2024-12-13" },
-    { code: "5", product: "Eggs", quantity: 12, unitPrice: 20, timestamp: "2024-12-1" },
-
 
   ]);
 
   const [filteredRows, setFilteredRows] = useState<ProductRow[]>(rows);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [timeFilter, setTimeFilter] = useState<string>("all");
+
+  const fetchHistory = async () => {
+    try {
+      const response = await axios.get("http://localhost:3001/invoices");
+
+      if (response.status === 200) {
+        const transformedRows: ProductRow[] = [];
+
+        for (const invoice of response.data) {
+          for (const line of invoice.invoiceLines) {
+            const productResponse = await axios.get(`http://localhost:3001/products/${line.product_id}`);
+            if (productResponse.status === 200) {
+              transformedRows.push({
+                code: invoice.invoice_cus_id.toString(),
+                product: productResponse.data.product_name,
+                quantity: line.invoice_cus_line_quantity,
+                unitPrice: line.invoice_cus_line_price,
+                timestamp: invoice.invoice_cus_timestamp,
+              });
+            }
+          }
+        }
+
+        setRows(transformedRows);
+        setFilteredRows(transformedRows);
+      }
+    } catch (e) {
+      console.error("Error fetching history:", e.message);
+    }
+  };
+
+
+  useEffect(() => {
+    fetchHistory();
+  }, []);
 
   const handleSearchProduct = (query: string) => {
     setSearchQuery(query);
@@ -45,7 +64,7 @@ export default function History() {
         row.product.toLowerCase().includes(query.toLowerCase()) ||
         row.timestamp.split("T")[0].includes(query)
     );
-    setFilteredRows(query ? filtered : rows); // Show all if query is empty
+    setFilteredRows(query ? filtered : rows);
   };
 
   const handleTimeFilter = (filter: string) => {
@@ -114,7 +133,7 @@ export default function History() {
                     <div className="basis-1/5 flex align-middle justify-center">{row.product}</div>
                     <div className="basis-1/5 flex align-middle justify-center">{row.quantity}</div>
                     <div className="basis-1/5 flex align-middle justify-center">{row.unitPrice}</div>
-                    <div className="basis-1/5 flex align-middle justify-center">{row.unitPrice * row.quantity}</div>
+                    <div className="basis-1/5 flex align-middle justify-center">{}</div>
                   </div>
                 ))}
               </div>

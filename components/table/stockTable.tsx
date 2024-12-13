@@ -11,9 +11,9 @@ import {AllCodesProducts} from "../../data/stock/allProducts";
 
 const Tabs: React.FC<TabsProps> = ({ tabs }) => {
   const [activeTab, setActiveTab] = useState(0);
-  const [isEditable, setEditable] = useState(false); //for the quantity
-  const [EditIndex, setEditIndex] = useState(-1); //for the quantity as well
-  const [rows, setRows] = useState<ProductRow[]>(AllCodesProducts);//initially display them all
+  const [isEditable, setEditable] = useState(false);
+  const [EditIndex, setEditIndex] = useState(-1); 
+  const [rows, setRows] = useState<ProductRow[]>(AllCodesProducts);
   const [AddProductpopup, setAddProductpopup] = useState<boolean>(false); 
   const [DeleteIndex, setDeleteIndex] = useState<number>(-1); 
   const [DeleteProductpopup, setDeleteProductpopup] = useState<boolean>(false); 

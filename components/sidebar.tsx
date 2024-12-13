@@ -1,13 +1,18 @@
 "use client";
+
 import { MdOutlineAttachMoney } from "react-icons/md";
 import { IoFastFood, IoSettingsSharp } from "react-icons/io5";
 import { FaUser, FaHistory } from "react-icons/fa";
 import Link from "next/link";
 import { clsx } from "clsx";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 const Sidebar: React.FC = () => {
     const pathname = usePathname();
+    const router = useRouter();
+
+
 
     const links = [
         {
