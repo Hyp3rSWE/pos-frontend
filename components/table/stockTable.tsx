@@ -313,6 +313,9 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
           ></input>:
           row.unitPrice
         }
+        
+        
+        
         </div>
 
       {
@@ -349,8 +352,8 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
   ))}  
 
 
-                                      </div>       
 </div>
+    </div>
     </div>
   );
 };
