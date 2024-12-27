@@ -7,39 +7,45 @@ import Link from "next/link";
 import { clsx } from "clsx";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { useUser } from "@/context/UserContext";
 
 const Sidebar: React.FC = () => {
     const pathname = usePathname();
     const router = useRouter();
+    const { userId, role } = useUser();
 
-
-
+    console.log("side bar role");
+    console.log(role);
     const links = [
-        {
-            href: "/vendre",
-            icon: MdOutlineAttachMoney,
-            label: "Vendre",
-        },
-        {
-            href: "/stock",
-            icon: IoFastFood,
-            label: "Stock",
-        },
-        {
-            href: "/fournisseur",
-            icon: FaUser,
-            label: "Fournisseur",
-        },
-        {
-            href: "/historique",
-            icon: FaHistory,
-            label: "Historique",
-        },
-        {
-            href: "/param",
-            icon: IoSettingsSharp,
-            label: "Paramètre",
-        },
+        ...(role === "cashier" ? [
+            {
+                href: "/vendre",
+                icon: MdOutlineAttachMoney,
+                label: "Vendre",
+            },
+        ] : [
+          
+            {
+                href: "/stock",
+                icon: IoFastFood,
+                label: "Stock",
+            },
+            {
+                href: "/fournisseur",
+                icon: FaUser,
+                label: "Fournisseur",
+            },
+            {
+                href: "/historique",
+                icon: FaHistory,
+                label: "Historique",
+            },
+            {
+                href: "/param",
+                icon: IoSettingsSharp,
+                label: "Paramètre",
+            },
+        ]),
     ];
 
     return (
