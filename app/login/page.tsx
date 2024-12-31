@@ -45,7 +45,7 @@ const Login = () => {
                 setUser(response.data.user_id, response.data.user_role);
 
                 if (role === 'admin') {
-                    router.push('/vendre');
+                    router.push('/stock');
                 } else {
                     router.push('/vendre');
                 }

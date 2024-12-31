@@ -3,16 +3,16 @@
 import { MdOutlineAttachMoney } from "react-icons/md";
 import { IoFastFood, IoSettingsSharp } from "react-icons/io5";
 import { FaUser, FaHistory } from "react-icons/fa";
+import { RiLogoutBoxFill } from "react-icons/ri";
 import Link from "next/link";
 import { clsx } from "clsx";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect } from "react";
 import { useUser } from "@/context/UserContext";
 
 const Sidebar: React.FC = () => {
     const pathname = usePathname();
     const router = useRouter();
-    const { userId, role } = useUser();
+    const { userId,logout, role } = useUser();
 
     console.log("side bar role");
     console.log(role);
@@ -88,7 +88,16 @@ const Sidebar: React.FC = () => {
                             </p>
                         </Link>
                     ))}
+                    
                 </nav>
+                <button className="text-[#838588] text-2xl flex justify-evenly hover:text-[#5CC3A4]" onClick={(e)=>{
+                    logout();
+                    router.replace("/");
+                }}>
+                    <div>Logout</div>
+                    <RiLogoutBoxFill className="text-3xl" />
+                </button>
+
             </div>
         </div>
     );

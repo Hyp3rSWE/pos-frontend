@@ -6,6 +6,9 @@ interface ProductInputProps {
   Downkey:string;
   textValue : string;
   onButtonClick: (inputValue: string) => void;
+  DownKeySelect?:string;
+  handleKeySelect?:()=>void;
+  Ref?:React.RefObject<HTMLInputElement>;
 }
 
 const ProductInput: React.FC<ProductInputProps> = ({
@@ -13,8 +16,10 @@ const ProductInput: React.FC<ProductInputProps> = ({
   placeholderText,
   textValue,
   Downkey,
-
   onButtonClick,
+  DownKeySelect,
+  handleKeySelect,
+  Ref,
 }) => {
   const [inputValue, setInputValue] = useState("");
 
@@ -34,6 +39,13 @@ const ProductInput: React.FC<ProductInputProps> = ({
       onButtonClick(textValue);
       setInputValue(""); 
     }
+    else if(e.key === DownKeySelect){
+      setInputValue(""); 
+      console.log("yeah that function is being called");
+      if(handleKeySelect){
+        handleKeySelect();
+      }
+    }
 
 
   };
@@ -42,7 +54,7 @@ const ProductInput: React.FC<ProductInputProps> = ({
     <div className="flex items-center space-x-2">
       <input
         type="text"
-
+        ref={Ref}
         value={inputValue}
         onChange={(e) => 
             setInputValue(e.target.value)

@@ -1,17 +1,18 @@
-import React, { useState , useRef} from "react";
+import React, { useState , useRef , useEffect} from "react";
 import { clsx } from 'clsx';
 import MybuttonSearch from '../buttonSearch/buttonSearch';
-import {AllFournisseurData , handleaddFournisseur} from "../../data/fournisseur/Allfournisser";
+import {AllFournisseurData , handleaddFournisseur , getAllFournisseur} from "../../data/fournisseur/Allfournisser";
+import {getAllFournisseurInvoices} from "../../data/fournisseur/fournisseur";
 import { inventory } from "@/data/fournisseur/fournisseur";
 import {fournisseursWithPayments} from "@/data/fournisseur/payement";
-import {TabsProps , FournisseurRow , DatedProductList , Transaction} from "../../types/index";
+import {TabsProps , FournisseurType , DatedProductList , Transaction} from "../../types/index";
 
 
 const Tabs: React.FC<TabsProps> = ({ tabs }) => {
 
   const [activeTab, setActiveTab] = useState(0);
   //all fournisseur
-  const [rows, setRows] = useState<FournisseurRow[]>(AllFournisseurData);
+  const [rows, setRows] = useState<FournisseurType[]>();
   //oneFournisseur: the products tab
   const [rowsFournisseur, setRowsFournisseur] = useState<DatedProductList[]>();
   //one fournisseur the payementsTab
@@ -24,9 +25,26 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
   const formRefAddFournisseur = useRef(null);
   const formRefAddPayement = useRef(null);
 
+  useEffect( () =>  {
+    console.log("Effect ran on mount");
+    getAllFournisseurInvoices(0);
+    console.log("Effect ran on mount");
+    const fetchData = async () => {
+      try {
+        var allFournisseur = await getAllFournisseur(); // Fetch data
+        console.log(allFournisseur);
+        setRows(allFournisseur); 
+        // Update state
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
+    };
+    fetchData();
+  }, []);
 
 
-    const totalDepts = rows.reduce((sum, row) => sum + row.Depts , 0);//all fournisseur depts
+
+    const totalDepts = rows?.reduce((sum, row) => sum + row.supplier_debt , 0);//all fournisseur depts
     //all the fournisseurs table
     if(!isFournisseur){
         return   (
@@ -75,7 +93,7 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
               </div>
          <span className="text-6xl font-bold mr-10">Total depts:</span>
          <span className="text-6xl font-bold bg-[#BEE7DB] text-black px-4 py-2 rounded-2xl">
-            {totalDepts.toFixed(2)}
+            {totalDepts?.toFixed(2)}
          </span>
         </div>
             {
@@ -110,12 +128,12 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
         
           {//rows for all the fournisseur
 }
-          {rows.map((row, index) => (
+          {rows?.map((row, index) => (
             <div>
             <div key={index} className="text-center flex pt-2 pb-2 mt-1 mb-1 hover:bg-[#cac9c9]"
             onClick={()=>{
-                setRowsFournisseur(inventory.find((fournisseur) => fournisseur.name === row.Name)?.datedProductLists);
-                setRowsFournisseurPayement(fournisseursWithPayments.find((fournisseur)=>fournisseur.Name === row.Name)?.transactions);
+                setRowsFournisseur(inventory.find((fournisseur) => fournisseur.name === row.supplier_name)?.datedProductLists);
+                setRowsFournisseurPayement(fournisseursWithPayments.find((fournisseur)=>fournisseur.Name === row.supplier_name)?.transactions);
                 setFournisseur(true);}}>
               {//Name
               }
@@ -123,13 +141,13 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
                 "basis-1/3 flex align-middle justify-center",
               )}
               >
-                <div>{row.Name}</div></div>    
+                <div>{row.supplier_name}</div></div>    
               {
                 //Phone number
               }
               <div className="basis-1/3 flex align-middle justify-center">
                 {
-                  row.PhoneNumber
+                  row.supplier_phone
                 }
                 </div>
               {
@@ -137,7 +155,7 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
               }
               <div className="basis-1/3 flex align-middle justify-center">
                 {
-                  row.Depts
+                  row.supplier_debt
                 }
                 </div> 
                </div>      
@@ -150,7 +168,7 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
     else{
       //perhaps bring it from data later on
       const totalDeptsFournisseur = -1
-      rows.reduce((sum, row) => sum + row.Depts , 0);//all fournisseur depts
+      rows?.reduce((sum, row) => sum + row.supplier_debt , 0);//all fournisseur depts
         return (
             <div className="w-full p-4">
           {

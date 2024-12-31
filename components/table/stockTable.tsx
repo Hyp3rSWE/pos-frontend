@@ -24,11 +24,9 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
   const formRefAddProduct = useRef(null);
 
   useEffect( () =>  {
-    console.log("Effect ran on mount");
     const fetchData = async () => {
       try {
         allProducts = await getAllProduct(); // Fetch data
-        console.log(allProducts);
         setRows(allProducts); 
         // Update state
       } catch (error) {
@@ -38,6 +36,12 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
 
     fetchData();
   }, []);
+
+  const handleKeyDownForm = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault(); // Prevent form submission on Enter key press
+    }
+  };
 
 
   const handleDeleteRow = async (ID: string) => {
@@ -81,7 +85,8 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
     const normalizedSearch = productName.trim().toLowerCase();
     allProducts = await getAllProduct();
     const newrows = allProducts?.filter(product => 
-      product.product.toLowerCase().includes(normalizedSearch)
+      product.product.toLowerCase().includes(normalizedSearch)||
+      product.code == normalizedSearch
     );
     setRows(newrows);
   };
@@ -101,10 +106,10 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
           >Please enter the information of the added product</div>
 
           <div className={clsx("p-5 w-full",!AddProductpopup&&"hidden")}>
-            <div className="w-full flex justify-evenly"><div className="m-1 text-2xl w-1/2">Product Code:</div><input name = "product_barcode" type="text" className="m-1 border-2 border-gray-300 rounded-lg p-0.5 w-1/2"/></div>
-            <div className="w-full flex justify-evenly"><div className="m-1 text-2xl w-1/2">Product Name:</div><input name="product_name" type="text" className="m-1 border-2 border-gray-300 rounded-lg p-0.5 w-1/2"/></div>
-            <div className="w-full flex justify-evenly"><div className="m-1 text-2xl w-1/2">Product quantity:</div><input name="product_stock_level"type="text" className="m-1 border-2 border-gray-300 rounded-lg p-0.5 w-1/2"/></div>
-            <div className="w-full flex justify-evenly"><div className="m-1 text-2xl w-1/2">Product unit price:</div><input name = "product_price" type="text" className="m-1 border-2 border-gray-300 rounded-lg p-0.5 w-1/2"/></div>
+            <div className="w-full flex justify-evenly"><div className="m-1 text-2xl w-1/2">Product Code:</div><input name = "product_barcode" type="text" className="m-1 border-2 border-gray-300 rounded-lg p-0.5 w-1/2" onKeyDown={handleKeyDownForm}/></div>
+            <div className="w-full flex justify-evenly"><div className="m-1 text-2xl w-1/2">Product Name:</div><input name="product_name" type="text" className="m-1 border-2 border-gray-300 rounded-lg p-0.5 w-1/2" onKeyDown={handleKeyDownForm}/></div>
+            <div className="w-full flex justify-evenly"><div className="m-1 text-2xl w-1/2">Product quantity:</div><input name="product_stock_level"type="text" className="m-1 border-2 border-gray-300 rounded-lg p-0.5 w-1/2" onKeyDown={handleKeyDownForm}/></div>
+            <div className="w-full flex justify-evenly"><div className="m-1 text-2xl w-1/2">Product unit price:</div><input name = "product_price" type="text" className="m-1 border-2 border-gray-300 rounded-lg p-0.5 w-1/2" onKeyDown={handleKeyDownForm}/></div>
 
           </div>
 
@@ -136,6 +141,8 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
           <div className={clsx("p-5 w-full",!AddQuantitypopup&&"hidden")}>
           <div className="w-full flex justify-evenly"><div className="m-1 text-2xl w-1/2">Product quantity:</div><input type="text" className="m-1 border-2 border-gray-300 rounded-lg p-0.5 w-1/2"/></div>
           <div className="w-full flex justify-evenly"><div className="m-1 text-2xl w-1/2">Product code:</div><input type="text" className="m-1 border-2 border-gray-300 rounded-lg p-0.5 w-1/2"/></div>
+          <div className="w-full flex justify-evenly"><div className="m-1 text-2xl w-1/2">Product old price:</div><input type="text" className="m-1 border-2 border-gray-300 rounded-lg p-0.5 w-1/2"/></div>
+          <div className="w-full flex justify-evenly"><div className="m-1 text-2xl w-1/2">Product new price:</div><input type="text" className="m-1 border-2 border-gray-300 rounded-lg p-0.5 w-1/2"/></div>
           </div>
 
           <div className="flex justify-center p-3">
@@ -218,7 +225,7 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
       >add quantity
         </button>   
       </div>
-        <MybuttonSearch textValue="" buttonText="Rechercher" placeholderText="le nom du produit"
+        <MybuttonSearch textValue="" buttonText="Rechercher" placeholderText="le nom / le code du produit"
         onButtonClick={handleSearchProduct}
         Downkey="Enter"
         />

@@ -12,19 +12,25 @@ const ProductTable: React.FC = () => {
   //the rows gets updated after reading value from scanner
   //or using "ajouter un produit" INITIALLY EMPTY
   const [rows, setRows] = useState<ProductRow[]>([]); 
-  const [focus, setfocus] = useState<boolean>(false); 
+  const [focus, setfocus] = useState<boolean>(false); //this boolean I used it to solve the problem of the text being
+  //always selected, the text of the quantity will get selected only once after scanning
   const [popup, setpopup] = useState<boolean>(false); 
   const [coloredInputIndex, setColoredIndex] = useState<number>(rows.length);
   const changedInputQuantityRef = useRef<HTMLInputElement>(null);
+  const AddProductInputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    if (changedInputQuantityRef.current && focus) {
-      changedInputQuantityRef.current.focus();
-      changedInputQuantityRef.current.select();
-      setfocus(false);
-     
+
+  const selectAddProductsInputField = (e:any)=>{
+    console.log("THE FUNCTION IS CALLED");
+    if(e.key === " "){
+      console.log("WHY");
+      if(AddProductInputRef.current){
+        console.log("IT IS NOT EMPTY");
+      }
+      AddProductInputRef.current?.focus();
     }
-  }, [rows]); 
+  }
+
 
   const handleQuantityChange = (index: number, value: number) => {
     const updatedRows = [...rows];
@@ -67,6 +73,12 @@ const ProductTable: React.FC = () => {
     }
     setRows(updateRows);
   };
+
+  const handleSelectForChange = async () => {
+    if (changedInputQuantityRef.current) {
+      changedInputQuantityRef.current.focus();
+  }
+}
 
   const totalAmount = rows.reduce((sum, row) => sum + row.quantity * row.unitPrice, 0);
 
@@ -114,6 +126,9 @@ const ProductTable: React.FC = () => {
         placeholderText="Ajouter le code de produit"
         onButtonClick={handleAddProduct}
         Downkey="Enter"
+        DownKeySelect=" "
+        handleKeySelect={handleSelectForChange}
+        Ref={AddProductInputRef}
       />
         </div>
 
@@ -176,6 +191,7 @@ const ProductTable: React.FC = () => {
                   onChange={(e) => handleQuantityChange(index, parseInt(e.target.value) || 1)}
                   className={"w-16 p-1 border rounded focus:bg-[#BEE7DB] h-8 text-center"
                   }
+                  onKeyDown={(e)=>selectAddProductsInputField(e)}
                 />
               </div>
 

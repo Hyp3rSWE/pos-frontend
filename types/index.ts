@@ -22,11 +22,7 @@ export interface TabsProps {
   tabs: Tab[];
 }
 
-export interface FournisseurRow {
-  Name: string;
-  PhoneNumber: string;
-  Depts: number;
-}
+
 
 export interface Product {
     unitPrice: number; 
@@ -46,7 +42,7 @@ export interface Transaction {
     amountPaid: number;
   }
 
-    // Define the structure for a fournisseur with dated product lists
+    // Define the structure for a fournisseur with dated product lists REMOVE WHEN DONE
 export  interface Fournisseur {
       name: string; // Supplier name
       datedProductLists: DatedProductList[]; // List of dated product lists for the supplier
@@ -55,4 +51,11 @@ export  interface Fournisseur {
 export  interface FournisseurTrans {
       Name: string;
       transactions: Transaction[];
+    }
+
+    export  interface FournisseurType {
+      supplier_debt:number;
+      supplier_id:string;
+      supplier_name:string;
+      supplier_phone:string;
     }

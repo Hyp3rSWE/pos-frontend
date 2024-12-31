@@ -1,4 +1,5 @@
 import {Fournisseur} from "../../types";
+import axios from "axios"
 
 
   
@@ -127,4 +128,15 @@ import {Fournisseur} from "../../types";
   console.log("Inventory for Supplier A on 2024-12-08:", inventory[0].datedProductLists[0]);
   console.log("First product for Supplier B on 2024-12-08:", inventory[1].datedProductLists[0].products[0]);
   console.log("Inventory for Supplier C on 2024-12-07:", inventory[2].datedProductLists[0]);
+
+  export const getAllFournisseurInvoices = async (id:number) =>  {
+    try {
+      const response = await axios.get(`http://localhost:3001/invoices-sup/${1}`);
+      console.log('Data:', response.data);
+
+      return;
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }
   

@@ -1,5 +1,5 @@
 
-import {FournisseurRow } from "../../types";
+import {FournisseurRow , FournisseurType} from "../../types";
 import axios from "axios"
 
 //later on use axios in here
@@ -22,18 +22,19 @@ import axios from "axios"
   ];
 
   export const getAllFournisseur:any  = async ()=> {
+    var allFourniData: FournisseurType[];
+    
     try {
-      var allStockData: FournisseurRow[];
-      const response = await axios.get("http://localhost:3001/products/");
-      console.log('Data:', response.data);
-      allStockData = response.data.map((product:any)=>({
-        code: product.product_barcode,
-        product: product.product_name,
-        quantity: product.product_stock_level,
-        unitPrice: product.product_price,
-        productid: product.product_id
+      const response = await axios.get("http://localhost:3001/suppliers/");
+      console.log('Data all fournisseurs:', response.data);
+      allFourniData = response.data.map((fournisseur:FournisseurType)=>({
+        supplier_debt: fournisseur.supplier_debt,
+        supplier_id: fournisseur.supplier_id,
+        supplier_name: fournisseur.supplier_name,
+        supplier_phone: fournisseur.supplier_phone,
       }))
-      return allStockData;
+      return allFourniData;
+
     } catch (error) {
       console.error('Error:', error);
     }

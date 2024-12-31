@@ -30,6 +30,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   const logout = () => {
     setUserId(null);
     setRole(null);
+    console.log("log out function called\n");
   };
 
   return (
