@@ -59,3 +59,38 @@ export  interface FournisseurTrans {
       supplier_name:string;
       supplier_phone:string;
     }
+
+    export interface InvoiceLineFournisseur{
+      product_name: string,
+      product_barcode: string,
+      invoice_sup_line_quantity: number,
+      invoice_sup_line_price: number,
+      product_total:number,
+    }
+
+    export interface InvoiceFournisseur{
+      invoice_sup_timestamp: String
+      invoice_sup_total_amount: Number,
+      invoiceLines : InvoiceLineFournisseur[],
+    }
+
+    /*
+{
+    "invoice_sup_id": 1,
+    "supplier_id": 1,
+    "invoice_sup_timestamp": "2024-12-06T08:00:00.000Z",
+    "invoice_sup_total_amount": 300,
+    "invoiceLines": [
+        {
+            "product_id": 1,
+            "invoice_sup_id": 1,
+            "product_variant_id": 1,
+            "invoice_sup_line_quantity": 5,
+            "invoice_sup_line_price": 55,
+
+            "product_cost": null,
+            "product_price": 120
+        }
+    ]
+}
+      */

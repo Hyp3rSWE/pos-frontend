@@ -5,7 +5,7 @@ import { TiDelete } from "react-icons/ti";
 import { FaPencilAlt } from "react-icons/fa";
 import { IoIosSave } from "react-icons/io";
 import {ProductRow , TabsProps} from "../../types/index";
-import {getAllProduct , handleaddProduct , DeleteProduct} from "../../data/stock/allProducts";
+import {getAllProduct , handleaddProduct , DeleteProduct , getTotaleStock } from "../../data/stock/allProducts";
 
 
 
@@ -14,6 +14,7 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
 
   const [isEditable, setEditable] = useState(false); //for the quantity
   const [EditIndex, setEditIndex] = useState(-1); //for the quantity as well
+  const [totalStock, setTotalStock] = useState(-1); //for the quantity as well
   const [rows, setRows] = useState<ProductRow[]>();//initially display them all
   var allProducts :ProductRow[]|undefined ;
   const [AddProductpopup, setAddProductpopup] = useState<boolean>(false); 
@@ -26,6 +27,9 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
   useEffect( () =>  {
     const fetchData = async () => {
       try {
+        var total = await getTotaleStock();
+        console.log("totale" , total);
+        setTotalStock(Number(total.totalStock));
         allProducts = await getAllProduct(); // Fetch data
         setRows(allProducts); 
         // Update state
@@ -209,7 +213,7 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
     <div className="flex justify-end items-center mr-4 -mt-10">
          <span className="text-6xl font-bold mr-10">Totale Stock:</span>
          <span className="text-6xl font-bold bg-[#BEE7DB] text-black px-4 py-2 rounded-2xl">
-    {-1}
+    {totalStock.toFixed(2)}
          </span>
         </div>
     <div className="flex justify-between w-full p-4">

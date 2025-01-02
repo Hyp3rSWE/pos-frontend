@@ -21,6 +21,17 @@ import axios from 'axios';
     }
   }
 
+  export const getTotaleStock = async () =>  {
+    try {
+      const response = await axios.get("http://localhost:3001/statistics/total-stock");
+      console.log('Data:', response.data);
+
+      return response.data;
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }
+
   export   const handleaddProduct = async (formRef:any) => {
     console.log('CALLED');
     // Collect all form data

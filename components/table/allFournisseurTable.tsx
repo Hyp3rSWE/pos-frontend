@@ -1,20 +1,22 @@
 import React, { useState , useRef , useEffect} from "react";
 import { clsx } from 'clsx';
 import MybuttonSearch from '../buttonSearch/buttonSearch';
-import {AllFournisseurData , handleaddFournisseur , getAllFournisseur} from "../../data/fournisseur/Allfournisser";
+import {handleaddFournisseur , getAllFournisseur , getTotaleDepts} from "../../data/fournisseur/Allfournisser";
 import {getAllFournisseurInvoices} from "../../data/fournisseur/fournisseur";
-import { inventory } from "@/data/fournisseur/fournisseur";
 import {fournisseursWithPayments} from "@/data/fournisseur/payement";
-import {TabsProps , FournisseurType , DatedProductList , Transaction} from "../../types/index";
+import {TabsProps , FournisseurType , InvoiceFournisseur , Transaction , InvoiceLineFournisseur} from "../../types/index";
 
 
 const Tabs: React.FC<TabsProps> = ({ tabs }) => {
 
   const [activeTab, setActiveTab] = useState(0);
   //all fournisseur
+  const [rowsAddinvoice, setRowsAddinvoice] = useState<InvoiceLineFournisseur[]>();
+  const [totalDept, setTotalDept] = useState();
+  //all fournisseur
   const [rows, setRows] = useState<FournisseurType[]>();
   //oneFournisseur: the products tab
-  const [rowsFournisseur, setRowsFournisseur] = useState<DatedProductList[]>();
+  const [rowsFournisseur, setRowsFournisseur] = useState<InvoiceFournisseur[]>();
   //one fournisseur the payementsTab
   const [rowsFournisseurPayement, setRowsFournisseurPayement] = useState<Transaction[]>();
   //used for to navigate between many fournisseurs and one fournisseur
@@ -22,21 +24,50 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
   // used to display and remove the pop up
   const [displayAddFournisseur , setdisplayAddFournisseur ] = useState<Boolean>(false);
   const [displayAddPayement , setdisplayAddPayement ] = useState<Boolean>(false);
+  const [displayAddInvoice , setdisplayAddInvoice ] = useState<Boolean>(false);
   const formRefAddFournisseur = useRef(null);
+  const formRefAddInvoice = useRef(null);
   const formRefAddPayement = useRef(null);
 
+  const handleSearchFournisseur = async (productName: string) => {
+    const normalizedSearch = productName.trim().toLowerCase();
+    var allFournisseur = await getAllFournisseur();
+    const newrows = allFournisseur?.filter((four: { supplier_name: string; supplier_phone: string; }) => 
+      four.supplier_name.toLowerCase().includes(normalizedSearch)||
+      four.supplier_phone.includes(normalizedSearch)
+    );
+    setRows(newrows);
+  };
+
+  const handleAddInvoice = async (formRef: any) => {
+    var newrows:InvoiceLineFournisseur[] | undefined = rowsAddinvoice? [...rowsAddinvoice]:[];
+    const formData = new FormData(formRef.current);
+    var Data = Object.fromEntries(formData.entries());  
+    var newProduct:InvoiceLineFournisseur = {
+      product_barcode:  Data.product_barcode.toString(),
+      invoice_sup_line_price:  Number(Data.invoice_sup_line_price),
+      product_name: "",
+      invoice_sup_line_quantity: Number(Data.invoice_sup_line_quantity),
+      product_total: Number(Data.invoice_sup_line_price) * Number(Data.invoice_sup_line_quantity),
+
+    } 
+
+    newrows.push(newProduct)
+    setRowsAddinvoice(newrows);
+    formRef.current.reset();
+  };
+
+
   useEffect( () =>  {
-    console.log("Effect ran on mount");
-    getAllFournisseurInvoices(0);
-    console.log("Effect ran on mount");
     const fetchData = async () => {
       try {
+        var total = await getTotaleDepts()
+        setTotalDept(total["total-supplier-debt"])
         var allFournisseur = await getAllFournisseur(); // Fetch data
-        console.log(allFournisseur);
         setRows(allFournisseur); 
         // Update state
       } catch (error) {
-        console.error("Error fetching products:", error);
+        console.error("Error fetching invoices:", error);
       }
     };
     fetchData();
@@ -110,8 +141,8 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
                 add fournisseur
               </button> 
               </div>
-                <MybuttonSearch textValue="" buttonText="Rechercher" placeholderText="le fournisseur / ses produits"
-                onButtonClick={()=>{}}
+                <MybuttonSearch textValue="" buttonText="Rechercher" placeholderText="le fournisseur / son n° de téléphone"
+                onButtonClick={handleSearchFournisseur}
                 Downkey="Enter"
                 />
             </div>        
@@ -131,8 +162,9 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
           {rows?.map((row, index) => (
             <div>
             <div key={index} className="text-center flex pt-2 pb-2 mt-1 mb-1 hover:bg-[#cac9c9]"
-            onClick={()=>{
-                setRowsFournisseur(inventory.find((fournisseur) => fournisseur.name === row.supplier_name)?.datedProductLists);
+            onClick={async ()=> {
+              var oneFourniData = await getAllFournisseurInvoices(row.supplier_id);
+                setRowsFournisseur(oneFourniData);
                 setRowsFournisseurPayement(fournisseursWithPayments.find((fournisseur)=>fournisseur.Name === row.supplier_name)?.transactions);
                 setFournisseur(true);}}>
               {//Name
@@ -164,11 +196,10 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
         </div>
             </div>);}
 
+
+
     //one fournisseur page
     else{
-      //perhaps bring it from data later on
-      const totalDeptsFournisseur = -1
-      rows?.reduce((sum, row) => sum + row.supplier_debt , 0);//all fournisseur depts
         return (
             <div className="w-full p-4">
           {
@@ -195,7 +226,7 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
                     )}
                     
                      onClick={()=>{
-                      handleaddFournisseur(formRefAddFournisseur);
+                      
                      }} type="submit">Add</button>
                     <button className={clsx("bg-[#BEE7DB] hover:bg-[#5CC3A4] px-4 py-2 rounded-2xl focus:outline-none focus:ring-2 focus:ring-offset-1 m-1",
                     !displayAddPayement && "hidden")} onClick={(e)=>{
@@ -206,12 +237,120 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
                 </div>
                 </form>
               </div>
+
+              {
+            //add payement pop up
+          }
+        <div className={clsx('',
+                "fixed inset-0 bg-black bg-opacity-50 items-center z-50 flex justify-center",
+                !displayAddInvoice && "hidden"
+              )}>
+                <form  ref = {formRefAddInvoice}
+                onSubmit={()=>{}} className="flex justify-center items-center w-full">
+                <div className="w-1/2 bg-white rounded-2xl flex-col max-h-[85vh] overflow-y-scroll">
+        
+                  <div className={clsx("text-center text-4xl p-3 ",!displayAddInvoice && "hidden")}
+                  >Please enter the information of the invoice</div>
+                  <div className={clsx("p-5 w-full",!displayAddInvoice && "hidden")}>
+                    <div className="w-full flex justify-evenly"><div className="m-1 text-2xl w-1/2">Code:</div><input name="product_barcode" type="text" className="m-1 border-2 border-gray-300 rounded-lg p-0.5 w-1/2"/></div>        
+                    <div className="w-full flex justify-evenly"><div className="m-1 text-2xl w-1/2">Quantity:</div><input name="invoice_sup_line_quantity" type="text" className="m-1 border-2 border-gray-300 rounded-lg p-0.5 w-1/2"/></div>        
+                    <div className="w-full flex justify-evenly"><div className="m-1 text-2xl w-1/2">Fournisseur Price:</div><input name="invoice_sup_line_price" type="text" className="m-1 border-2 border-gray-300 rounded-lg p-0.5 w-1/2"/></div>  
+                    <div className="flex justify-end">
+                    <button className={clsx("bg-[#BEE7DB] hover:bg-[#5CC3A4] px-4 py-2 rounded-2xl focus:outline-none focus:ring-2 focus:ring-offset-1 m-1",
+                    !displayAddInvoice && "hidden"
+                    )}
+                    
+                     onClick={(e)=>{
+                      e.preventDefault();
+                      handleAddInvoice(formRefAddInvoice);
+                     }} >Add Product</button>
+
+                    </div>
+                    <div className="h-2"></div>
+
+
+
+                    <div className="bg-[#BEE7DB] flex rounded-2xl pt-2 pb-2 pl-3 pr-3">
+                    <div className="basis-1/5 flex align-middle justify-center"><div className="font-bold">Code</div></div>
+                    <div className="basis-1/5 flex align-middle justify-center"><div className="font-bold">Produit</div></div>
+                    <div className="basis-1/5 flex align-middle justify-center"><div className="font-bold">Prix unité fournisseur</div></div>
+                    <div className="basis-1/5 flex align-middle justify-center"><div className="font-bold">Quantité</div></div>
+                    <div className="basis-1/5 flex align-middle justify-center"><div className="font-bold">Prix totale</div></div>
+                    </div> 
+                    <div className="h-2"></div>
+                    <div className="w-full max-h-72 overflow-y-scroll">
+                    {rowsFournisseur?.map((rowFour, index) => (
+                    <div>
+                    <div className="rounded-2xl bg-[#EBEBEB]">
+                    {
+                        rowsAddinvoice?.map((invoiceLine) => (<div 
+                            key={index}
+                            className={clsx(
+                            "text-center w-full flex pt-2 pb-2",
+                          )}>
+                {//Product Code
+                  }
+                  <div className="basis-1/5 flex align-middle justify-center">
+                      {invoiceLine.product_barcode}
+                    </div>
+                {//unitPrice
+                  }
+                  <div className="basis-1/5 flex align-middle justify-center">
+                      {invoiceLine.invoice_sup_line_price}
+                    </div>
+
+                {//quantity
+                  }
+                  <div className="basis-1/5 flex align-middle justify-center">
+                      {invoiceLine.invoice_sup_line_quantity}
+                    </div>
+
+                {//total
+                  }
+                  <div className="basis-1/5 flex align-middle justify-center">
+                      {(invoiceLine.product_total.toFixed(2))}
+                    </div>
+
+
+                        </div>))
+                    }
+                    </div>
+                      </div>
+                  
+                  ))}  
+                
+                
+                </div>
+
+
+             
+                  </div>
+        
+                  <div className="flex justify-center p-3">
+                    <button className={clsx("bg-[#BEE7DB] hover:bg-[#5CC3A4] px-4 py-2 rounded-2xl focus:outline-none focus:ring-2 focus:ring-offset-1 m-1",
+                    !displayAddInvoice && "hidden"
+                    )}
+                    
+                     onClick={()=>{
+                      
+                     }} type="submit">Add</button>
+                    <button className={clsx("bg-[#BEE7DB] hover:bg-[#5CC3A4] px-4 py-2 rounded-2xl focus:outline-none focus:ring-2 focus:ring-offset-1 m-1",
+                    !displayAddInvoice && "hidden")} onClick={(e)=>{
+                      e.preventDefault();
+                      setRowsAddinvoice([]);
+                      setdisplayAddInvoice(false);
+                    }}>Cancel</button>
+                  </div>
+                </div>
+                </form>
+              </div>
+
         {//the total depts for that fournisseur text field
         }
         <div className="flex justify-end items-center mb-4">
          <span className="text-6xl font-bold mr-10">Total depts:</span>
          <span className="text-6xl font-bold bg-[#BEE7DB] text-black px-4 py-2 rounded-2xl">
-            {totalDeptsFournisseur.toFixed(2)}
+            {totalDepts?.toFixed(2)}
          </span>
         </div>
             <div className="flex justify-between w-full pt-4 pb-4">
@@ -254,6 +393,17 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
               }
         {activeTab == 0?
         <div className="">
+            <div className="flex w-full justify-end">
+            <button
+              className="bg-[#BEE7DB] hover:bg-[#5CC3A4] px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-1 m-1 mb-2"
+              onClick={()=>{
+                setdisplayAddInvoice(true);
+              }}
+            >
+              Add invoice
+            </button> 
+            </div>
+
         <div className="bg-[#BEE7DB] flex rounded-2xl pt-2 pb-2 pl-3 pr-3">
         <div className="basis-1/5 flex align-middle justify-center"><div className="font-bold">Code</div></div>
         <div className="basis-1/5 flex align-middle justify-center"><div className="font-bold">Produit</div></div>
@@ -262,6 +412,7 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
         <div className="basis-1/5 flex align-middle justify-center"><div className="font-bold">Prix totale</div></div>
         </div>
         <div className="h-2"></div>
+
         <div className="w-full max-h-72 overflow-y-scroll">
           {rowsFournisseur?.map((rowFour, index) => (
             <div>
@@ -270,7 +421,10 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
 
             }
             <div key={index} className="text-center font-bold flex pt-2 pb-2 mt-1 mb-1 bg-white">
-                {rowFour.date}
+            {new Date(rowFour.invoice_sup_timestamp.toString()).toLocaleString("en-US", {
+              dateStyle: "long",
+              timeStyle: "short",
+              timeZone: "UTC",})}
             </div>
 
 
@@ -281,7 +435,7 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
             {
                 
 
-                rowFour.products.map((product, productIndex) => (<div 
+                rowFour.invoiceLines.map((product) => (<div 
                     key={index}
                     className={clsx(
                     "text-center w-full flex pt-2 pb-2",
@@ -292,30 +446,30 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
         {//Product Code
           }
           <div className="basis-1/5 flex align-middle justify-center">
-              {product.productCode}
+              {product.product_barcode}
             </div>
         {//Product Name
           }
           <div className="basis-1/5 flex align-middle justify-center">
-              {product.productName}
+              {product.product_name}
             </div>
 
         {//unitPrice
           }
           <div className="basis-1/5 flex align-middle justify-center">
-              {product.unitPrice}
+              {product.invoice_sup_line_price}
             </div>
 
         {//quantity
           }
           <div className="basis-1/5 flex align-middle justify-center">
-              {product.quantity}
+              {product.invoice_sup_line_quantity}
             </div>
 
         {//total
           }
           <div className="basis-1/5 flex align-middle justify-center">
-              {(product.quantity * product.unitPrice).toFixed(2)}
+              {(product.product_total.toFixed(2))}
             </div>
 
 
@@ -326,8 +480,7 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
                 <div className="bg-[#BEE7DB]  rounded-2xl ml-5 p-2 mb-1">
                    
                 totale: {
-                    rowFour.products.reduce((sum, row) => sum + row.quantity * row.unitPrice, 0)
-                    
+                    rowFour.invoice_sup_total_amount.toFixed(2)
                 }
                 </div>
 
@@ -341,6 +494,8 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
         
         </div>
         </div>
+
+
         :
         <div>
           <div className="flex w-full justify-end">
@@ -374,7 +529,9 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
                 "basis-1/3 flex align-middle justify-center",
               )}
               >
-                <div>{row.date}</div></div>
+                <div>{
+                row.date
+                  }</div></div>
               {
                 //amount paid
               }
