@@ -74,6 +74,23 @@ export  interface FournisseurTrans {
       invoiceLines : InvoiceLineFournisseur[],
     }
 
+    export interface Adjustment {
+      adjustment_id: number;
+      user_id: number;
+      product_id: number;
+      product_variant_id?: number;
+      previous_quantity: number;
+      new_quantity: number;
+      adjustment_reason: string;
+      adjustment_timestamp: string;
+      Product?: {
+        product_name: string;
+      };
+      ProductVariant?: {
+        variant_barcode: string;
+      };
+    }
+
     /*
 {
     "invoice_sup_id": 1,
