@@ -6,6 +6,8 @@ import { FaPencilAlt } from "react-icons/fa";
 import { IoIosSave } from "react-icons/io";
 import {ProductRow , TabsProps} from "../../types/index";
 import {getAllProduct , handleaddProduct , DeleteProduct , getTotaleStock } from "../../data/stock/allProducts";
+import AdjustQuantityModal from '../AdjustQuantityModal'
+import { toast } from 'react-hot-toast';
 
 
 
@@ -23,6 +25,10 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
   const [AddQuantitypopup, setAddQuantitypopup] = useState<boolean>(false); 
   const [SavePricepopup, setSavePricepopup] = useState<boolean>(false); 
   const formRefAddProduct = useRef(null);
+  const [adjustQuantityModal, setAdjustQuantityModal] = useState<boolean>(false);
+  const [selectedProduct, setSelectedProduct] = useState<ProductRow | null>(null);
+  const [newQuantity, setNewQuantity] = useState<number>(0);
+  const [adjustmentReason, setAdjustmentReason] = useState<string>('');
 
   useEffect( () =>  {
     const fetchData = async () => {
@@ -93,6 +99,42 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
       product.code == normalizedSearch
     );
     setRows(newrows);
+  };
+
+  const handleAdjustQuantity = async () => {
+    try {
+      if (!selectedProduct) return;
+
+      const response = await fetch(`http://localhost:3001/adjustments`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          product_id: selectedProduct.productid,
+          new_quantity: newQuantity,
+          reason: adjustmentReason,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to adjust quantity');
+      }
+
+      // Refresh the product list
+      const updatedProducts = await getAllProduct();
+      setRows(updatedProducts);
+      
+      // Update total stock
+      const total = await getTotaleStock();
+      setTotalStock(Number(total.totalStock));
+
+      toast.success('Quantity adjusted successfully');
+      setAdjustQuantityModal(false);
+    } catch (error) {
+      console.error('Error adjusting quantity:', error);
+      toast.error('Failed to adjust quantity');
+    }
   };
 
   return (
@@ -204,6 +246,28 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
     setDeleteID("")}}>Cancel</button>
 </div>
 </div>
+
+{// Add the Adjust Quantity Modal
+}
+<AdjustQuantityModal
+  isOpen={adjustQuantityModal}
+  closeModal={() => {
+    setAdjustQuantityModal(false);
+    setSelectedProduct(null);
+  }}
+  productId={Number(selectedProduct?.productid) ?? 0}
+  productName={selectedProduct?.product ?? ''}
+  currentQuantity={selectedProduct?.quantity ?? 0}
+  onQuantityAdjusted={async () => {
+    // Refresh the product list
+    const updatedProducts = await getAllProduct();
+    setRows(updatedProducts);
+    
+    // Update total stock
+    const total = await getTotaleStock();
+    setTotalStock(Number(total.totalStock));
+  }}
+/>
 
     
 
@@ -352,6 +416,18 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
           <FaPencilAlt className="text-black text-2xl hover:text-gray-500"></FaPencilAlt>
           }
           
+        </button>
+
+        <button
+          onClick={() => {
+            setSelectedProduct(row);
+            setAdjustQuantityModal(true);
+          }}
+          className="text-white px-2 py-1 rounded"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-blue-500 hover:text-blue-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 11l5-5m0 0l5 5m-5-5v12" />
+          </svg>
         </button>
         </div>
 
