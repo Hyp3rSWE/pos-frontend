@@ -54,7 +54,7 @@ import axios from 'axios';
       const result = await response.json();
       console.log(result);
     } catch (error) {
-      console.error('Error submitting form:', error);
+      console.error('Error adding product:', error);
     }
       
   };
@@ -71,3 +71,18 @@ import axios from 'axios';
       }
     }
   }
+
+  export const UpdateProductPrice = async (productId: string, newPrice: number) => {
+    try {
+      const response = await axios.put(`http://localhost:3001/products/${productId}`, {
+        product_price: newPrice, // Sending the updated price in the request body
+      });
+      console.log('Product price updated successfully:', response.data);
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.error('Error updating product price:', error.message);
+      } else {
+        console.error('Unexpected error:', error);
+      }
+    }
+  };

@@ -5,7 +5,7 @@ import { TiDelete } from "react-icons/ti";
 import { FaPencilAlt } from "react-icons/fa";
 import { IoIosSave } from "react-icons/io";
 import {ProductRow , TabsProps} from "../../types/index";
-import {getAllProduct , handleaddProduct , DeleteProduct , getTotaleStock } from "../../data/stock/allProducts";
+import {getAllProduct , handleaddProduct , DeleteProduct , getTotaleStock , UpdateProductPrice} from "../../data/stock/allProducts";
 import AdjustQuantityModal from '../AdjustQuantityModal'
 import { toast } from 'react-hot-toast';
 
@@ -20,7 +20,8 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
   const [rows, setRows] = useState<ProductRow[]>();//initially display them all
   var allProducts :ProductRow[]|undefined ;
   const [AddProductpopup, setAddProductpopup] = useState<boolean>(false); 
-  const [DeleteID, setDeleteID] = useState<string>(""); 
+  const [DeleteUpdateID, setDeleteUpdateID] = useState<string>(""); 
+  const [UpdatePrice, setUpdatePrice] = useState<number>(""); 
   const [DeleteProductpopup, setDeleteProductpopup] = useState<boolean>(false); 
   const [AddQuantitypopup, setAddQuantitypopup] = useState<boolean>(false); 
   const [SavePricepopup, setSavePricepopup] = useState<boolean>(false); 
@@ -156,6 +157,7 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
             <div className="w-full flex justify-evenly"><div className="m-1 text-2xl w-1/2">Product Name:</div><input name="product_name" type="text" className="m-1 border-2 border-gray-300 rounded-lg p-0.5 w-1/2" onKeyDown={handleKeyDownForm}/></div>
             <div className="w-full flex justify-evenly"><div className="m-1 text-2xl w-1/2">Product quantity:</div><input name="product_stock_level"type="text" className="m-1 border-2 border-gray-300 rounded-lg p-0.5 w-1/2" onKeyDown={handleKeyDownForm}/></div>
             <div className="w-full flex justify-evenly"><div className="m-1 text-2xl w-1/2">Product unit price:</div><input name = "product_price" type="text" className="m-1 border-2 border-gray-300 rounded-lg p-0.5 w-1/2" onKeyDown={handleKeyDownForm}/></div>
+            <div className="w-full flex justify-evenly"><div className="m-1 text-2xl w-1/2">Product cost:</div><input name = "product_cost" type="text" className="m-1 border-2 border-gray-300 rounded-lg p-0.5 w-1/2" onKeyDown={handleKeyDownForm}/></div>
 
           </div>
 
@@ -187,8 +189,8 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
           <div className={clsx("p-5 w-full",!AddQuantitypopup&&"hidden")}>
           <div className="w-full flex justify-evenly"><div className="m-1 text-2xl w-1/2">Product quantity:</div><input type="text" className="m-1 border-2 border-gray-300 rounded-lg p-0.5 w-1/2"/></div>
           <div className="w-full flex justify-evenly"><div className="m-1 text-2xl w-1/2">Product code:</div><input type="text" className="m-1 border-2 border-gray-300 rounded-lg p-0.5 w-1/2"/></div>
-          <div className="w-full flex justify-evenly"><div className="m-1 text-2xl w-1/2">Product old price:</div><input type="text" className="m-1 border-2 border-gray-300 rounded-lg p-0.5 w-1/2"/></div>
-          <div className="w-full flex justify-evenly"><div className="m-1 text-2xl w-1/2">Product new price:</div><input type="text" className="m-1 border-2 border-gray-300 rounded-lg p-0.5 w-1/2"/></div>
+          <div className="w-full flex justify-evenly"><div className="m-1 text-2xl w-1/2">Product old cost:</div><input type="text" className="m-1 border-2 border-gray-300 rounded-lg p-0.5 w-1/2"/></div>
+          <div className="w-full flex justify-evenly"><div className="m-1 text-2xl w-1/2">Product new cost:</div><input type="text" className="m-1 border-2 border-gray-300 rounded-lg p-0.5 w-1/2"/></div>
           </div>
 
           <div className="flex justify-center p-3">
@@ -216,7 +218,13 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
           <div className="flex justify-center p-3">
             <button className={clsx("bg-[#BEE7DB] hover:bg-[#5CC3A4] px-4 py-2 rounded-2xl focus:outline-none focus:ring-2 focus:ring-offset-1 m-1",
             !SavePricepopup&&"hidden")}
-             onClick={()=>setSavePricepopup(false)}>Yes</button>
+             onClick={ async () =>{setSavePricepopup(false)
+             await UpdateProductPrice(DeleteUpdateID,UpdatePrice);
+             setDeleteUpdateID("");
+             setUpdatePrice(-1);
+            }}
+             
+             >Yes</button>
             <button className={clsx("bg-[#BEE7DB] hover:bg-[#5CC3A4] px-4 py-2 rounded-2xl focus:outline-none focus:ring-2 focus:ring-offset-1 m-1",
             !SavePricepopup&&"hidden")} onClick={()=>setSavePricepopup(false)}>Cancel</button>
           </div>
@@ -239,11 +247,11 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
   <button className={clsx("bg-[#BEE7DB] hover:bg-[#5CC3A4] px-4 py-2 rounded-2xl focus:outline-none focus:ring-2 focus:ring-offset-1 m-1",
   !DeleteProductpopup&&"hidden")}
    onClick={()=>{setDeleteProductpopup(false)
-    handleDeleteRow(DeleteID)
+    handleDeleteRow(DeleteUpdateID)
    }}>Yes</button>
   <button className={clsx("bg-[#BEE7DB] hover:bg-[#5CC3A4] px-4 py-2 rounded-2xl focus:outline-none focus:ring-2 focus:ring-offset-1 m-1",
   !DeleteProductpopup&&"hidden")} onClick={()=>{setDeleteProductpopup(false)
-    setDeleteID("")}}>Cancel</button>
+    setDeleteUpdateID("")}}>Cancel</button>
 </div>
 </div>
 
@@ -400,7 +408,7 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
         <div className="flex justify-center content-evenly">
         <button
           onClick={() => {setDeleteProductpopup(true) 
-            setDeleteID(row.productid)}}
+            setDeleteUpdateID(row.productid)}}
           className="text-white px-2 py-1 rounded"
         >
           <TiDelete className="text-red-500 text-3xl hover:text-red-800"></TiDelete>
@@ -408,7 +416,10 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
 
         <button
           onClick={()=>{handleEditPrice(index);
-            (isEditable && index == EditIndex)?setSavePricepopup(true):()=>{}}}
+            (isEditable && index == EditIndex)?setSavePricepopup(true):()=>{}
+            setDeleteUpdateID(row.productid);
+            setUpdatePrice(row.unitPrice);
+          }}
           className="text-white px-2 py-1 rounded"
         >
           {isEditable && index == EditIndex?
