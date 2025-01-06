@@ -214,9 +214,7 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
           </div>
 
           <div className="flex justify-center p-3">
-            <button className={clsx("bg-[#BEE7DB] hover:bg-[#5CC3A4] px-4 py-2 rounded-2xl focus:outline-none focus:ring-2 focus:ring-offset-1 m-1",
-            !SavePricepopup&&"hidden")}
-             onClick={()=>setSavePricepopup(false)}>Yes</button>
+           <PrinterComponent />
             <button className={clsx("bg-[#BEE7DB] hover:bg-[#5CC3A4] px-4 py-2 rounded-2xl focus:outline-none focus:ring-2 focus:ring-offset-1 m-1",
             !SavePricepopup&&"hidden")} onClick={()=>setSavePricepopup(false)}>Cancel</button>
           </div>
