@@ -135,8 +135,8 @@ const ProductList: React.FC = () => {
                     <div className="font-mono">{product.product_barcode}</div>
                     <div className="col-span-2">{product.product_name}</div>
                     <div>{product.product_stock_level}</div>
-                    <div className="text-green-600">${product.product_price.toFixed(2)}</div>
-                    <div className="text-gray-600">${product.product_cost.toFixed(2)}</div>
+                    <div className="text-green-600">{product.product_price.toFixed(2)}</div>
+                    <div className="text-gray-600">{product.product_cost.toFixed(2)}</div>
                   </div>
                 ))}
               </div>
