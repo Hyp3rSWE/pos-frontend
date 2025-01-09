@@ -91,6 +91,14 @@ export  interface FournisseurTrans {
       };
     }
 
+    export type LineObject = {
+      product_id: number;
+      product_variant_id: number | null;
+      invoice_cus_line_quantity: number;
+      invoice_cus_line_price: number;
+    };
+    
+
     /*
 {
     "invoice_sup_id": 1,

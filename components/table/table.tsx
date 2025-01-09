@@ -3,7 +3,7 @@ import { clsx } from 'clsx';
 import MybuttonSearch from '../buttonSearch/buttonSearch';
 import { TiDelete } from "react-icons/ti";
 import {ProductRow} from "../../types/index"
-import {getProdByCode} from "../../data/vendre/GetProduct"; //this will probably changes later on...
+import {getProdByCode , handleAddInvoice} from "../../data/vendre/GetProduct"; //this will probably changes later on...
 
 
 
@@ -91,7 +91,7 @@ const ProductTable: React.FC = () => {
         <div className="w-1/2 bg-white rounded-2xl flex-col">
 
           <div className={clsx("text-center text-4xl p-3",!popup && "hidden")}
-          >Do you want to print a receipts ?</div>
+          >Are you sure you want to perform this operation ?</div>
 
           <div className="flex justify-center p-3">
             <button className={clsx("bg-[#BEE7DB] hover:bg-[#5CC3A4] px-4 py-2 rounded-2xl focus:outline-none focus:ring-2 focus:ring-offset-1 m-1",
@@ -238,7 +238,9 @@ const ProductTable: React.FC = () => {
       </div>
       <div className="flex justify-end items-center mt-4">
         <button className="bg-[#BEE7DB] hover:bg-[#5CC3A4] px-4 py-2 rounded-2xl focus:outline-none focus:ring-2 focus:ring-offset-1"
-        onClick={()=>setpopup(true)}
+        onClick={()=>{setpopup(true)
+          handleAddInvoice(rows,totalAmount)
+        }}
         >Valider</button>
       </div>
     </div>

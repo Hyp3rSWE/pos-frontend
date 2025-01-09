@@ -1,8 +1,8 @@
 import React, { useState , useRef , useEffect} from "react";
 import { clsx } from 'clsx';
 import MybuttonSearch from '../buttonSearch/buttonSearch';
-import {handleaddFournisseur , getAllFournisseur , getTotaleDepts} from "../../data/fournisseur/Allfournisser";
-import {getAllFournisseurInvoices} from "../../data/fournisseur/fournisseur";
+import {handleaddFournisseur , getAllFournisseur , getTotaleDepts } from "../../data/fournisseur/Allfournisser";
+import {getAllFournisseurInvoices, handleAddPayment} from "../../data/fournisseur/fournisseur";
 import {fournisseursWithPayments} from "@/data/fournisseur/payement";
 import {TabsProps , FournisseurType , InvoiceFournisseur , Transaction , InvoiceLineFournisseur} from "../../types/index";
 
@@ -15,6 +15,7 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
   const [totalDept, setTotalDept] = useState();
   //all fournisseur
   const [rows, setRows] = useState<FournisseurType[]>();
+  const [FournisseurID, setID] = useState(-1);
   //oneFournisseur: the products tab
   const [rowsFournisseur, setRowsFournisseur] = useState<InvoiceFournisseur[]>();
   //one fournisseur the payementsTab
@@ -71,7 +72,7 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
       }
     };
     fetchData();
-  }, []);
+  }, rows);
 
 
 
@@ -161,12 +162,16 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
 }
           {rows?.map((row, index) => (
             <div>
-            <div key={index} className="text-center flex pt-2 pb-2 mt-1 mb-1 hover:bg-[#cac9c9]"
+            <div key={index} className="text-center flex pt-2 pb-2 mt-1 mb-1"
             onClick={async ()=> {
+              /*
+              setID(Number(row.supplier_id));
               var oneFourniData = await getAllFournisseurInvoices(row.supplier_id);
                 setRowsFournisseur(oneFourniData);
                 setRowsFournisseurPayement(fournisseursWithPayments.find((fournisseur)=>fournisseur.Name === row.supplier_name)?.transactions);
-                setFournisseur(true);}}>
+                setFournisseur(true);
+                */
+                }}>
               {//Name
               }
               <div className={clsx(
@@ -217,7 +222,7 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
                   >Please enter the information of the payement</div>
         
                   <div className={clsx("p-5 w-full",!displayAddPayement && "hidden")}>
-                    <div className="w-full flex justify-evenly"><div className="m-1 text-2xl w-1/2">Amount:</div><input name="supplier_name" type="text" className="m-1 border-2 border-gray-300 rounded-lg p-0.5 w-1/2"/></div>        
+                    <div className="w-full flex justify-evenly"><div className="m-1 text-2xl w-1/2">Amount:</div><input name="amount" type="text" className="m-1 border-2 border-gray-300 rounded-lg p-0.5 w-1/2"/></div>        
                   </div>
         
                   <div className="flex justify-center p-3">
@@ -225,9 +230,13 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
                     !displayAddPayement && "hidden"
                     )}
                     
-                     onClick={()=>{
-                      
+                     onClick={(e)=>{
+                      e.preventDefault()
+                      handleAddPayment(FournisseurID,formRefAddPayement)
+                      setdisplayAddPayement(false);
                      }} type="submit">Add</button>
+
+
                     <button className={clsx("bg-[#BEE7DB] hover:bg-[#5CC3A4] px-4 py-2 rounded-2xl focus:outline-none focus:ring-2 focus:ring-offset-1 m-1",
                     !displayAddPayement && "hidden")} onClick={(e)=>{
                       e.preventDefault();
