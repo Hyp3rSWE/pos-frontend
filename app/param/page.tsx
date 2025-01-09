@@ -61,9 +61,22 @@ export default function SettingsPage() {
         }
     };
 
-    const deleteCashier = (id) => {
-        setCashiers(cashiers.filter((cashier) => cashier.id !== id));
+    const deleteCashier = async (id) => {
+        if (window.confirm("Are you sure you want to delete this cashier?")) {
+            try {
+                console.log(id);
+                const response = await axios.delete(`http://localhost:3001/users/${id}`);
+                if (response.status === 200) {
+                    setCashiers(cashiers.filter((cashier) => cashier.user_id !== id));
+                    console.log("Cashier deleted successfully!");
+                }
+            } catch (error) {
+                console.error("Error deleting cashier:", error.message);
+                alert("Failed to delete the cashier. Please try again.");
+            }
+        }
     };
+    
 
     const confirmAdminUpdate = async () => {
         if (!adminSettings.username && !adminSettings.password) {
@@ -205,7 +218,7 @@ export default function SettingsPage() {
                                 <thead className="bg-teal-500 text-white">
                                     <tr>
                                         <th className="p-3">Name</th>
-                                        <th className="p-3">Username</th>
+                                        <th className="p-3">ID</th>
                                         <th className="p-3">Actions</th>
                                     </tr>
                                 </thead>
@@ -241,7 +254,7 @@ export default function SettingsPage() {
                                                 <button
                                                     onClick={() =>
                                                         deleteCashier(
-                                                            cashier.id
+                                                            cashier.user_id
                                                         )
                                                     }
                                                     className="px-2 py-1 bg-red-500 text-white rounded-md"

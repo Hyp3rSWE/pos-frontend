@@ -91,9 +91,12 @@ const Sidebar: React.FC = () => {
                 <button 
                     className="text-[#838588] text-2xl flex justify-evenly items-center p-4 hover:text-[#5CC3A4] mb-4" 
                     onClick={() => {
-                        logout();
-                        router.replace("/");
-                    }}
+                        logout(); 
+                        setTimeout(() => {
+                          router.replace("/login"); 
+                        }, 0);
+                      }}
+                      
                 >
                     <div>Logout</div>
                     <RiLogoutBoxFill className="text-3xl" />

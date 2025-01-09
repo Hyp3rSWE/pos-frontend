@@ -130,9 +130,8 @@ export default function History() {
   return (
     <div className="flex">
       <MySidebar />
-      <div className="flex flex-col w-full">
-        {/* Tabs - adjusted margin-left and color */}
-        <div className="flex border-b border-gray-200 mb-4 ml-52">
+      <div className="flex flex-col w-full  mt-10">
+        <div className="flex border-b border-gray-200 mb-4 ml-64">
           <button
             onClick={() => setActiveTab('sales')}
             className={`px-4 py-2 ${

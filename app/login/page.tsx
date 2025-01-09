@@ -121,18 +121,7 @@ const Login = () => {
                             </select>
                         </div>
 
-                        <div className={styles.rememberMeContainer}>
-                            <label className={styles.checkboxLabel}>
-                                <input
-                                    type="checkbox"
-                                    checked={rememberMe}
-                                    onChange={handleRememberMeChange}
-                                    className={styles.checkboxInput}
-                                />
-                                <span className={styles.customCheckbox}></span>
-                                Remember Me
-                            </label>
-                        </div>
+                        
                         <div className={styles.forgotPasswordContainer}>
                             <h1 className={styles.Forgotpassword}>{warning}</h1>
                         </div>
