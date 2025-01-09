@@ -4,6 +4,7 @@ import { MdOutlineAttachMoney } from "react-icons/md";
 import { IoFastFood, IoSettingsSharp } from "react-icons/io5";
 import { FaUser, FaHistory } from "react-icons/fa";
 import { RiLogoutBoxFill } from "react-icons/ri";
+import { BsBox } from "react-icons/bs";
 import Link from "next/link";
 import { clsx } from "clsx";
 import { usePathname, useRouter } from "next/navigation";
@@ -12,10 +13,8 @@ import { useUser } from "@/context/UserContext";
 const Sidebar: React.FC = () => {
     const pathname = usePathname();
     const router = useRouter();
-    const { userId,logout, role } = useUser();
+    const { userId, logout, role } = useUser();
 
-    console.log("side bar role");
-    console.log(role);
     const links = [
         ...(role === "cashier" ? [
             {
@@ -24,7 +23,6 @@ const Sidebar: React.FC = () => {
                 label: "Vendre",
             },
         ] : [
-          
             {
                 href: "/stock",
                 icon: IoFastFood,
@@ -41,6 +39,11 @@ const Sidebar: React.FC = () => {
                 label: "Historique",
             },
             {
+                href: "/products",
+                icon: BsBox,
+                label: "Products",
+            },
+            {
                 href: "/param",
                 icon: IoSettingsSharp,
                 label: "Paramètre",
@@ -49,13 +52,9 @@ const Sidebar: React.FC = () => {
     ];
 
     return (
-        <div
-            className={clsx(
-                "fixed top-0 left-0 z-50 w-48 bg-[#EBEBEB] h-full shadow-lg" // Sidebar fixed on the left side
-            )}
-        >
+        <div className={clsx("fixed top-0 left-0 z-50 w-48 bg-[#EBEBEB] h-full shadow-lg")}>
             <div className="flex flex-col h-full">
-                <nav className="flex flex-col py-4 space-around">
+                <nav className="flex flex-col py-4 space-around flex-1">
                     {links.map(({ href, icon: Icon, label }) => (
                         <Link
                             key={href}
@@ -88,16 +87,17 @@ const Sidebar: React.FC = () => {
                             </p>
                         </Link>
                     ))}
-                    
                 </nav>
-                <button className="text-[#838588] text-2xl flex justify-evenly hover:text-[#5CC3A4]" onClick={(e)=>{
-                    logout();
-                    router.replace("/");
-                }}>
+                <button 
+                    className="text-[#838588] text-2xl flex justify-evenly items-center p-4 hover:text-[#5CC3A4] mb-4" 
+                    onClick={() => {
+                        logout();
+                        router.replace("/");
+                    }}
+                >
                     <div>Logout</div>
                     <RiLogoutBoxFill className="text-3xl" />
                 </button>
-
             </div>
         </div>
     );

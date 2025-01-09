@@ -9,7 +9,12 @@ import {getAllProduct , handleaddProduct , DeleteProduct , getTotaleStock } from
 import AdjustQuantityModal from '../AdjustQuantityModal'
 import { toast } from 'react-hot-toast';
 
-
+interface Supplier {
+  supplier_id: number;
+  supplier_name: string;
+  supplier_phone: string;
+  supplier_debt: number;
+}
 
 const Tabs: React.FC<TabsProps> = ({ tabs }) => {
   const [activeTab, setActiveTab] = useState(0);
@@ -29,6 +34,7 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
   const [selectedProduct, setSelectedProduct] = useState<ProductRow | null>(null);
   const [newQuantity, setNewQuantity] = useState<number>(0);
   const [adjustmentReason, setAdjustmentReason] = useState<string>('');
+  const [suppliers, setSuppliers] = useState<Supplier[]>([]);
 
   useEffect( () =>  {
     const fetchData = async () => {
@@ -45,6 +51,20 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
     };
 
     fetchData();
+  }, []);
+
+  useEffect(() => {
+    const fetchSuppliers = async () => {
+      try {
+        const response = await fetch('http://localhost:3001/suppliers');
+        const data = await response.json();
+        setSuppliers(data);
+      } catch (error) {
+        console.error('Error fetching suppliers:', error);
+      }
+    };
+
+    fetchSuppliers();
   }, []);
 
   const handleKeyDownForm = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -153,10 +173,21 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
 
           <div className={clsx("p-5 w-full",!AddProductpopup&&"hidden")}>
             <div className="w-full flex justify-evenly"><div className="m-1 text-2xl w-1/2">Product Code:</div><input name = "product_barcode" type="text" className="m-1 border-2 border-gray-300 rounded-lg p-0.5 w-1/2" onKeyDown={handleKeyDownForm}/></div>
+            <div className="w-full flex justify-evenly"><div className="m-1 text-2xl w-1/2">Supplier:</div><select 
+              name="supplier_id" 
+              className="m-1 border-2 border-gray-300 rounded-lg p-0.5 w-1/2"
+            >
+              <option value="">Select a supplier</option>
+              {suppliers.map((supplier) => (
+                <option key={supplier.supplier_id} value={supplier.supplier_id}>
+                  {supplier.supplier_name}
+                </option>
+              ))}
+            </select></div>
             <div className="w-full flex justify-evenly"><div className="m-1 text-2xl w-1/2">Product Name:</div><input name="product_name" type="text" className="m-1 border-2 border-gray-300 rounded-lg p-0.5 w-1/2" onKeyDown={handleKeyDownForm}/></div>
-            <div className="w-full flex justify-evenly"><div className="m-1 text-2xl w-1/2">Product quantity:</div><input name="product_stock_level"type="text" className="m-1 border-2 border-gray-300 rounded-lg p-0.5 w-1/2" onKeyDown={handleKeyDownForm}/></div>
-            <div className="w-full flex justify-evenly"><div className="m-1 text-2xl w-1/2">Product unit price:</div><input name = "product_price" type="text" className="m-1 border-2 border-gray-300 rounded-lg p-0.5 w-1/2" onKeyDown={handleKeyDownForm}/></div>
-
+            <div className="w-full flex justify-evenly"><div className="m-1 text-2xl w-1/2">Product quantity:</div><input name="product_stock_level"type="number" className="m-1 border-2 border-gray-300 rounded-lg p-0.5 w-1/2" onKeyDown={handleKeyDownForm}/></div>
+            <div className="w-full flex justify-evenly"><div className="m-1 text-2xl w-1/2">Product unit price:</div><input name = "product_price" type="number" step="0.01" className="m-1 border-2 border-gray-300 rounded-lg p-0.5 w-1/2" onKeyDown={handleKeyDownForm}/></div>
+            <div className="w-full flex justify-evenly"><div className="m-1 text-2xl w-1/2">Product cost:</div><input name="product_cost" type="number" step="0.01" className="m-1 border-2 border-gray-300 rounded-lg p-0.5 w-1/2" onKeyDown={handleKeyDownForm}/></div>
           </div>
 
           <div className="flex justify-center p-3">

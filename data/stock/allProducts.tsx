@@ -39,7 +39,6 @@ import axios from 'axios';
     var data = Object.fromEntries(formData.entries());
 
     //because I'm forced to give the ID correct it in next sprint
-    data.supplier_id = "1";
 
     console.log('Form data:', data);
 

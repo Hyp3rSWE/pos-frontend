@@ -1,30 +1,31 @@
-import { Inter } from 'next/font/google'
-import './globals.css'
-import { UserProvider } from '../context/UserContext'
+'use client';
 
-const inter = Inter({
-  subsets: ['latin'],
-  display: 'swap',
-  weight: ['400', '500', '600', '700'],
-  variable: '--font-inter',
-})
+import { UserProvider } from '@/context/UserContext';
+import Sidebar from '@/components/sidebar';
+import './globals.css';
+import { usePathname } from 'next/navigation';
+import clsx from 'clsx';
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
+  const pathname = usePathname();
+  const isLoginPage = pathname === '/' || pathname === '/login';
+
   return (
-    <html lang="en" className={`${inter.variable} font-sans`}>
-      <head>
-        <meta charSet="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-      </head>
-      <body className={`${inter.className} antialiased`}>
+    <html lang="en">
+      <body>
         <UserProvider>
-          {children}
+          <div className="flex h-screen">
+            {!isLoginPage && <Sidebar />}
+            <div className={clsx("flex-1", !isLoginPage && "ml-48")}>
+              {children}
+            </div>
+          </div>
         </UserProvider>
       </body>
     </html>
-  )
+  );
 }
