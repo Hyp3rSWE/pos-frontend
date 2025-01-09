@@ -1,4 +1,4 @@
-import {ProductRow} from '../../types/index';
+import {ProductRow , LineObject} from '../../types/index';
 import axios from 'axios';
 
   export const getProdByCode = async (BarCode: String) =>  {
@@ -10,6 +10,7 @@ import axios from 'axios';
       product.code = response.data.product_barcode;
       product.product = response.data.product_name;
       product.unitPrice = response.data.product_price;
+      product.productid = response.data.product_id
       return product
     } catch (error) {
       console.error('Error:', error);
@@ -45,5 +46,43 @@ import axios from 'axios';
       } else {
         console.error('Unexpected error:', error);
       }
+    }
+  };
+
+  export const handleAddInvoice = async (rows: ProductRow[] , amount: Number) => {
+    console.log("function called");
+    var lineObjects: LineObject [] = []
+    for (const item of rows) {
+      var newObj :LineObject = {
+        product_id : Number(item.productid),
+        invoice_cus_line_price : item.unitPrice,
+        product_variant_id: null,
+        invoice_cus_line_quantity: item.quantity
+      }
+      
+      lineObjects.push(newObj)
+    }
+
+    var sendData = {
+      invoice_lines:lineObjects,
+      invoice_cus_total_amount:amount,
+      customer_id:1,
+    }
+    /**
+     *   "invoice_cus_total_amount": 500,
+  "customer_id": 1,
+     */
+
+
+    try {
+      const response = await fetch(`http://localhost:3001/invoices`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(sendData),
+      });
+      const result = await response.json();
+      console.log(result);
+    } catch (error) {
+      console.error('Error submitting form:', error);
     }
   };

@@ -26,22 +26,23 @@ import axios from "axios"
     }
   }
 
-  export const handleaddInvoice = async (invoiceLines:InvoiceLineFournisseur[]) => {
-    var invoice:InvoiceFournisseur;
-
-    //okey so first I'll have to get the variant id nd all
-    
-
-
+  
+  export const handleAddPayment = async (id: number, formRef: any) => {
+    const formData = new FormData(formRef.current);
+    const data = Object.fromEntries(formData.entries());
     try {
-      const response = await fetch('http://localhost:3001/suppliers', {
-        method: 'POST',
+      const response = await fetch(`http://localhost:3001/debt-sup/${id}`, {
+        method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       });
       const result = await response.json();
+      console.log(result);
     } catch (error) {
       console.error('Error submitting form:', error);
     }
   };
+  
+
+  
   

@@ -1,63 +1,62 @@
-'use client';
+"use client";
 
-import Sidebar from '@/components/sidebar';
-import { useUser } from '@/context/UserContext';
-import axios from 'axios';
-import { useEffect, useState } from 'react';
-
+import Sidebar from "@/components/sidebar";
+import { useUser } from "@/context/UserContext";
+import axios from "axios";
+import { useEffect, useState } from "react";
 
 export default function SettingsPage() {
-
-
     const { userId, role } = useUser();
 
     const [cashiers, setCashiers] = useState([]);
     const [newCashier, setNewCashier] = useState({
-        username: '',
-        password: '',
+        username: "",
+        password: "",
     });
     const [selectedCashier, setSelectedCashier] = useState(null);
     const [updateCashier, setUpdateCashier] = useState({
-        username: '',
-        password: '',
+        username: "",
+        password: "",
     });
     const [adminSettings, setAdminSettings] = useState({
-        username: '',
-        password: '',
+        username: "",
+        password: "",
     });
-    const [activeSection, setActiveSection] = useState('cashiers');
+    const [activeSection, setActiveSection] = useState("cashiers");
     const [editableFields, setEditableFields] = useState({});
 
-
     const addCashier = async (e) => {
-
         try {
             const response = await axios.post("http://localhost:3001/users", {
-                "user_role": "cashier",
-                "user_name": newCashier.username,
-                "user_pass": newCashier.password,
+                user_role: "cashier",
+                user_name: newCashier.username,
+                user_pass: newCashier.password,
             });
             if (response.status === 200) {
                 console.log("Success");
             }
-        }
-        catch (e) {
+        } catch (e) {
             console.log(e.message);
         }
     };
 
     const editCashierDetails = async (e) => {
         try {
-            const response = await axios.put(`http://localhost:3001/users/${selectedCashier.user_id}`, {
-                user_name: updateCashier.username,
-                user_pass: updateCashier.password == '' ? null : updateCashier.password
-            });
+            const response = await axios.put(
+                `http://localhost:3001/users/${selectedCashier.user_id}`,
+                {
+                    user_name: updateCashier.username,
+                    user_pass:
+                        updateCashier.password == ""
+                            ? null
+                            : updateCashier.password,
+                }
+            );
 
             if (response.status === 200) {
                 console.log("updated !");
             }
-        }
-        catch (e) {
+        } catch (e) {
             console.log(e.message);
         }
     };
@@ -74,7 +73,7 @@ export default function SettingsPage() {
 
         console.log("---------------------------");
         console.log(userId);
-        if (window.confirm('Are you sure you want to update admin settings?')) {
+        if (window.confirm("Are you sure you want to update admin settings?")) {
             try {
                 if (!userId) {
                     alert("You must be logged in to update admin settings.");
@@ -82,15 +81,19 @@ export default function SettingsPage() {
                 }
 
                 const updateData = {};
-                if (adminSettings.username) updateData.user_name = adminSettings.username;
-                if (adminSettings.password) updateData.user_pass = adminSettings.password;
+                if (adminSettings.username)
+                    updateData.user_name = adminSettings.username;
+                if (adminSettings.password)
+                    updateData.user_pass = adminSettings.password;
 
-
-                const response = await axios.put(`http://localhost:3001/users/${userId}`, updateData);
+                const response = await axios.put(
+                    `http://localhost:3001/users/${userId}`,
+                    updateData
+                );
 
                 if (response.status === 200) {
                     alert("Admin settings updated successfully!");
-                    setAdminSettings({ username: '', password: '' });
+                    setAdminSettings({ username: "", password: "" });
                 }
             } catch (error) {
                 console.error("Error updating admin settings:", error.message);
@@ -98,7 +101,6 @@ export default function SettingsPage() {
             }
         }
     };
-
 
     const handleChangeClick = (field) => {
         setEditableFields((prev) => ({
@@ -109,62 +111,72 @@ export default function SettingsPage() {
 
     const fetchCashiers = async () => {
         try {
-            const query = await axios.get("http://localhost:3001/users/role/cashier");
+            const query = await axios.get(
+                "http://localhost:3001/users/role/cashier"
+            );
 
             if (query.status == 200) {
                 setCashiers(query.data);
             }
-        }
-        catch (e) {
+        } catch (e) {
             console.log(e.message);
         }
     };
 
     useEffect(() => {
         fetchCashiers();
-
-
     }, []);
 
     return (
-
         <div className="flex min-h-screen bg-gray-100">
             <Sidebar></Sidebar>
 
             <div className="flex flex-col w-full ml-52 mt-10">
-                <div className="flex bg-gray-100 p-4">
+                <div className="flex border-b border-gray-200 mb-4 ml-10">
                     <button
-                        className={`px-6 py-3 text-lg font-medium ${activeSection === 'cashiers' ? 'bg-teal-500 text-white' : 'bg-gray-300'
-                            } rounded-md mr-4`}
-                        onClick={() => setActiveSection('cashiers')}
+                        onClick={() => setActiveSection("cashiers")}
+                        className={`px-4 py-2 ${
+                            activeSection === "cashiers"
+                                ? "border-b-2 border-[#BEE7DB] text-[#2C5282]"
+                                : "text-gray-500"
+                        }`}
                     >
                         Manage Cashiers
                     </button>
                     <button
-                        className={`px-6 py-3 text-lg font-medium ${activeSection === 'admin' ? 'bg-teal-500 text-white' : 'bg-gray-300'
-                            } rounded-md`}
-                        onClick={() => setActiveSection('admin')}
+                        onClick={() => setActiveSection("admin")}
+                        className={`px-4 py-2 ${
+                            activeSection === "admin"
+                                ? "border-b-2 border-[#BEE7DB] text-[#2C5282]"
+                                : "text-gray-500"
+                        }`}
                     >
                         Manage Admin Credentials
                     </button>
-
                 </div>
 
                 <main className="w-4/5 p-10">
                     <h1 className="text-2xl font-bold mb-5">Settings</h1>
 
-                    {activeSection === 'cashiers' && (
+                    {activeSection === "cashiers" && (
                         <section className="mb-10">
-                            <h2 className="text-xl font-semibold mb-4">Manage Cashiers</h2>
-                            <form onSubmit={addCashier} className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-
+                            <h2 className="text-xl font-semibold mb-4">
+                                Manage Cashiers
+                            </h2>
+                            <form
+                                onSubmit={addCashier}
+                                className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6"
+                            >
                                 <input
                                     type="text"
                                     placeholder="Username"
                                     className="p-3 border rounded-md w-full"
                                     value={newCashier.username}
                                     onChange={(e) =>
-                                        setNewCashier({ ...newCashier, username: e.target.value })
+                                        setNewCashier({
+                                            ...newCashier,
+                                            username: e.target.value,
+                                        })
                                     }
                                     required
                                 />
@@ -174,7 +186,10 @@ export default function SettingsPage() {
                                     className="p-3 border rounded-md w-full"
                                     value={newCashier.password}
                                     onChange={(e) =>
-                                        setNewCashier({ ...newCashier, password: e.target.value })
+                                        setNewCashier({
+                                            ...newCashier,
+                                            password: e.target.value,
+                                        })
                                     }
                                     required
                                 />
@@ -196,17 +211,27 @@ export default function SettingsPage() {
                                 </thead>
                                 <tbody>
                                     {cashiers.map((cashier) => (
-                                        <tr key={cashier.id} className="text-center border-t">
-                                            <td className="p-3">{cashier.user_name}</td>
-                                            <td className="p-3">{cashier.user_id}</td>
+                                        <tr
+                                            key={cashier.id}
+                                            className="text-center border-t"
+                                        >
+                                            <td className="p-3">
+                                                {cashier.user_name}
+                                            </td>
+                                            <td className="p-3">
+                                                {cashier.user_id}
+                                            </td>
                                             <td className="p-3 flex justify-center gap-2">
                                                 <button
                                                     onClick={() => {
-                                                        setSelectedCashier(cashier);
+                                                        setSelectedCashier(
+                                                            cashier
+                                                        );
                                                         console.log(cashier);
                                                         setUpdateCashier({
-                                                            username: cashier.user_name,
-                                                            password: '',
+                                                            username:
+                                                                cashier.user_name,
+                                                            password: "",
                                                         });
                                                     }}
                                                     className="px-2 py-1 bg-blue-500 text-white rounded-md"
@@ -214,7 +239,11 @@ export default function SettingsPage() {
                                                     Edit
                                                 </button>
                                                 <button
-                                                    onClick={() => deleteCashier(cashier.id)}
+                                                    onClick={() =>
+                                                        deleteCashier(
+                                                            cashier.id
+                                                        )
+                                                    }
                                                     className="px-2 py-1 bg-red-500 text-white rounded-md"
                                                 >
                                                     Delete
@@ -226,12 +255,19 @@ export default function SettingsPage() {
                             </table>
 
                             {selectedCashier && (
-                                <form onSubmit={editCashierDetails} className="mt-6 space-y-4">
+                                <form
+                                    onSubmit={editCashierDetails}
+                                    className="mt-6 space-y-4"
+                                >
                                     <h3 className="text-lg font-semibold mb-4">
-                                        Edit Cashier: {selectedCashier.user_name}
+                                        Edit Cashier:{" "}
+                                        {selectedCashier.user_name}
                                     </h3>
                                     <div>
-                                        <label htmlFor="username" className="block text-sm font-medium mb-1">
+                                        <label
+                                            htmlFor="username"
+                                            className="block text-sm font-medium mb-1"
+                                        >
                                             New Username
                                         </label>
                                         <div className="flex items-center gap-2">
@@ -242,13 +278,21 @@ export default function SettingsPage() {
                                                 className="p-3 border rounded-md w-full"
                                                 value={updateCashier.username}
                                                 onChange={(e) =>
-                                                    setUpdateCashier({ ...updateCashier, username: e.target.value })
+                                                    setUpdateCashier({
+                                                        ...updateCashier,
+                                                        username:
+                                                            e.target.value,
+                                                    })
                                                 }
                                                 required
                                             />
                                             <button
                                                 type="button"
-                                                onClick={() => handleChangeClick('username')}
+                                                onClick={() =>
+                                                    handleChangeClick(
+                                                        "username"
+                                                    )
+                                                }
                                                 className="px-3 py-2 bg-teal-500 text-white rounded-md"
                                             >
                                                 Change
@@ -256,7 +300,10 @@ export default function SettingsPage() {
                                         </div>
                                     </div>
                                     <div>
-                                        <label htmlFor="password" className="block text-sm font-medium mb-1">
+                                        <label
+                                            htmlFor="password"
+                                            className="block text-sm font-medium mb-1"
+                                        >
                                             New Password
                                         </label>
                                         <div className="flex items-center gap-2">
@@ -267,13 +314,20 @@ export default function SettingsPage() {
                                                 className="p-3 border rounded-md w-full"
                                                 value={updateCashier.password}
                                                 onChange={(e) =>
-                                                    setUpdateCashier({ ...updateCashier, password: e.target.value })
+                                                    setUpdateCashier({
+                                                        ...updateCashier,
+                                                        password:
+                                                            e.target.value,
+                                                    })
                                                 }
-
                                             />
                                             <button
                                                 type="button"
-                                                onClick={() => handleChangeClick('password')}
+                                                onClick={() =>
+                                                    handleChangeClick(
+                                                        "password"
+                                                    )
+                                                }
                                                 className="px-3 py-2 bg-teal-500 text-white rounded-md"
                                             >
                                                 Change
@@ -288,16 +342,20 @@ export default function SettingsPage() {
                                     </button>
                                 </form>
                             )}
-
                         </section>
                     )}
 
-                    {activeSection === 'admin' && (
+                    {activeSection === "admin" && (
                         <section>
-                            <h2 className="text-2xl font-semibold mb-6">Admin Settings</h2>
+                            <h2 className="text-2xl font-semibold mb-6">
+                                Admin Settings
+                            </h2>
                             <form className="space-y-6 max-w-md">
                                 <div>
-                                    <label htmlFor="adminUsername" className="block text-lg font-medium mb-2">
+                                    <label
+                                        htmlFor="adminUsername"
+                                        className="block text-lg font-medium mb-2"
+                                    >
                                         New Username
                                     </label>
                                     <div className="flex items-center gap-3">
@@ -308,14 +366,23 @@ export default function SettingsPage() {
                                             className="p-4 border-2 rounded-md w-full text-lg"
                                             value={adminSettings.username}
                                             onChange={(e) =>
-                                                setAdminSettings({ ...adminSettings, username: e.target.value })
+                                                setAdminSettings({
+                                                    ...adminSettings,
+                                                    username: e.target.value,
+                                                })
                                             }
                                             required
-                                            disabled={!editableFields.adminUsername}
+                                            disabled={
+                                                !editableFields.adminUsername
+                                            }
                                         />
                                         <button
                                             type="button"
-                                            onClick={() => handleChangeClick('adminUsername')}
+                                            onClick={() =>
+                                                handleChangeClick(
+                                                    "adminUsername"
+                                                )
+                                            }
                                             className="px-5 py-3 bg-teal-500 text-white rounded-md text-lg"
                                         >
                                             Change
@@ -323,7 +390,10 @@ export default function SettingsPage() {
                                     </div>
                                 </div>
                                 <div>
-                                    <label htmlFor="adminPassword" className="block text-lg font-medium mb-2">
+                                    <label
+                                        htmlFor="adminPassword"
+                                        className="block text-lg font-medium mb-2"
+                                    >
                                         New Password
                                     </label>
                                     <div className="flex items-center gap-3">
@@ -334,14 +404,23 @@ export default function SettingsPage() {
                                             className="p-4 border-2 rounded-md w-full text-lg"
                                             value={adminSettings.password}
                                             onChange={(e) =>
-                                                setAdminSettings({ ...adminSettings, password: e.target.value })
+                                                setAdminSettings({
+                                                    ...adminSettings,
+                                                    password: e.target.value,
+                                                })
                                             }
                                             required
-                                            disabled={!editableFields.adminPassword} // Enable if 'adminPassword' field is set to true
+                                            disabled={
+                                                !editableFields.adminPassword
+                                            } // Enable if 'adminPassword' field is set to true
                                         />
                                         <button
                                             type="button"
-                                            onClick={() => handleChangeClick('adminPassword')}
+                                            onClick={() =>
+                                                handleChangeClick(
+                                                    "adminPassword"
+                                                )
+                                            }
                                             className="px-5 py-3 bg-teal-500 text-white rounded-md text-lg"
                                         >
                                             Change
@@ -358,7 +437,12 @@ export default function SettingsPage() {
                                     </button>
                                     <button
                                         type="button"
-                                        onClick={() => setAdminSettings({ username: '', password: '' })}
+                                        onClick={() =>
+                                            setAdminSettings({
+                                                username: "",
+                                                password: "",
+                                            })
+                                        }
                                         className="px-6 py-3 bg-gray-400 text-white rounded-md text-lg"
                                     >
                                         Cancel
