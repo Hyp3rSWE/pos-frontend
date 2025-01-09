@@ -160,7 +160,7 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
   return (
     
     <div className="w-full">
-{//the pop up of adding a product
+{//the pop up of adding a productt
 }
 <div className={clsx('',
         AddProductpopup && "fixed inset-0 bg-black bg-opacity-50 items-center z-50 flex justify-center align-middle"
