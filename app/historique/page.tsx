@@ -177,11 +177,11 @@ export default function History() {
               <div className="basis-1/5 flex align-middle justify-center font-bold">Prix Unitaire</div>
               <div className="basis-1/5 flex align-middle justify-center font-bold">Prix Total</div>
             </div>
-            {Object.entries(groupedRows).map(([date, dateRows]) => (
+            {Object.entries(groupedRows).slice().reverse().map(([date, dateRows]) => (
               <div key={date} className="mb-8">
                 <h2 className="text-lg font-bold mb-2">{date}</h2>
                 <div className="bg-[#EBEBEB] rounded-2xl w-full mt-2 max-h-72 overflow-y-scroll">
-                  {dateRows.map((row, index) => (
+                  {dateRows.slice().reverse().map((row, index) => (
                     <div key={index} className="text-center flex py-2">
                       <div className="basis-1/5 flex align-middle justify-center">{row.code}</div>
                       <div className="basis-1/5 flex align-middle justify-center">{row.product}</div>
@@ -206,7 +206,7 @@ export default function History() {
               <div className="basis-1/6 flex align-middle justify-center font-bold">Raison</div>
             </div>
             <div className="bg-[#EBEBEB] rounded-2xl w-full mt-2 max-h-72 overflow-y-scroll">
-              {filteredAdjustments.map((adjustment, index) => (
+              {filteredAdjustments.slice().reverse().map((adjustment, index) => (
                 <div key={index} className="text-center flex py-2">
                   <div className="basis-1/6 flex align-middle justify-center">
                     {new Date(adjustment.adjustment_timestamp).toLocaleDateString()}
