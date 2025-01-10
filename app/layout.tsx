@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { UserProvider } from '@/context/UserContext';
-import Sidebar from '@/components/sidebar';
-import './globals.css';
-import { usePathname } from 'next/navigation';
-import clsx from 'clsx';
+import { UserProvider } from "@/context/UserContext";
+import Sidebar from "@/components/sidebar";
+import "./globals.css";
+import { usePathname } from "next/navigation";
+import clsx from "clsx";
 
 export default function RootLayout({
   children,
@@ -12,7 +12,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  const isLoginPage = pathname === '/' || pathname === '/login';
+  const isLoginPage = pathname === "/" || pathname === "/login";
 
   return (
     <html lang="en">

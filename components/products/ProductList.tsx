@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { toast } from 'react-hot-toast';
+import React, { useState, useEffect } from "react";
+import { toast } from "react-hot-toast";
 
 interface Supplier {
   supplier_id: number;
@@ -25,7 +25,7 @@ const ProductList: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [selectedSupplier, setSelectedSupplier] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     fetchSuppliers();
@@ -33,13 +33,13 @@ const ProductList: React.FC = () => {
 
   const fetchSuppliers = async () => {
     try {
-      const response = await fetch('http://localhost:3001/suppliers');
+      const response = await fetch("http://localhost:3001/suppliers");
       const data = await response.json();
       setSuppliers(data);
       setLoading(false);
     } catch (error) {
-      console.error('Error fetching suppliers:', error);
-      toast.error('Failed to load suppliers');
+      console.error("Error fetching suppliers:", error);
+      toast.error("Failed to load suppliers");
       setLoading(false);
     }
   };
@@ -47,21 +47,23 @@ const ProductList: React.FC = () => {
   const fetchProducts = async (supplierId: number) => {
     try {
       setLoading(true);
-      const response = await fetch('http://localhost:3001/products');
+      const response = await fetch("http://localhost:3001/products");
       const data = await response.json();
-      const filteredProducts = data.filter((product: Product) => product.supplier_id === supplierId);
+      const filteredProducts = data.filter(
+        (product: Product) => product.supplier_id === supplierId,
+      );
       setProducts(filteredProducts);
       setSelectedSupplier(supplierId);
       setLoading(false);
     } catch (error) {
-      console.error('Error fetching products:', error);
-      toast.error('Failed to load products');
+      console.error("Error fetching products:", error);
+      toast.error("Failed to load products");
       setLoading(false);
     }
   };
 
-  const filteredSuppliers = suppliers.filter(supplier =>
-    supplier.supplier_name.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredSuppliers = suppliers.filter((supplier) =>
+    supplier.supplier_name.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   return (
@@ -89,19 +91,32 @@ const ProductList: React.FC = () => {
             <div className="space-y-3">
               {filteredSuppliers.map((supplier) => (
                 <div
-                  key={supplier.supplier_id}
-                  className={`p-4 rounded-xl cursor-pointer transition-all duration-200 ${
-                    selectedSupplier === supplier.supplier_id
-                      ? 'bg-[#5CC3A4] text-white shadow-lg transform scale-[1.02]'
-                      : 'bg-white hover:bg-gray-50 hover:shadow-md'
-                  }`}
-                  onClick={() => fetchProducts(supplier.supplier_id)}
-                >
-                  <div className="font-medium text-lg">{supplier.supplier_name}</div>
-                  <div className={`text-sm ${selectedSupplier === supplier.supplier_id ? 'text-white/90' : 'text-gray-600'}`}>
+                key={supplier.supplier_id}
+                className={`p-4 rounded-xl cursor-pointer transition-all duration-200 ${
+                  selectedSupplier === supplier.supplier_id
+                    ? "bg-[#5CC3A4] text-white shadow-lg transform scale-[1.02]"
+                    : "bg-white hover:bg-gray-50 hover:shadow-md"
+                }`}
+                onClick={() => fetchProducts(supplier.supplier_id)}
+                role="button"         // Define this div as a button
+                tabIndex={0}          // Make it focusable
+                onKeyDown={(e) => {   // Allow keyboard interaction
+                  if (e.key === "Enter" || e.key === " ") {
+                    fetchProducts(supplier.supplier_id);
+                  }
+                }}
+              >
+                  <div className="font-medium text-lg">
+                    {supplier.supplier_name}
+                  </div>
+                  <div
+                    className={`text-sm ${selectedSupplier === supplier.supplier_id ? "text-white/90" : "text-gray-600"}`}
+                  >
                     📞 {supplier.supplier_phone}
                   </div>
-                  <div className={`text-sm ${selectedSupplier === supplier.supplier_id ? 'text-white/90' : 'text-gray-600'}`}>
+                  <div
+                    className={`text-sm ${selectedSupplier === supplier.supplier_id ? "text-white/90" : "text-gray-600"}`}
+                  >
                     💰 Debt: ${supplier.supplier_debt.toFixed(2)}
                   </div>
                 </div>
@@ -135,25 +150,51 @@ const ProductList: React.FC = () => {
                     <div className="font-mono">{product.product_barcode}</div>
                     <div className="col-span-2">{product.product_name}</div>
                     <div>{product.product_stock_level}</div>
-                    <div className="text-green-600">{product.product_price.toFixed(2)}</div>
-                    <div className="text-gray-600">{product.product_cost.toFixed(2)}</div>
+                    <div className="text-green-600">
+                      {product.product_price.toFixed(2)}
+                    </div>
+                    <div className="text-gray-600">
+                      {product.product_cost.toFixed(2)}
+                    </div>
                   </div>
                 ))}
               </div>
             ) : (
               <div className="flex flex-col items-center justify-center h-full text-gray-500">
-                <svg className="w-16 h-16 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                <svg
+                  className="w-16 h-16 mb-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
+                  />
                 </svg>
                 <p className="text-xl">No products found for this supplier</p>
               </div>
             )
           ) : (
             <div className="flex flex-col items-center justify-center h-full text-gray-500">
-              <svg className="w-16 h-16 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 4H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-2m-4-1v8m0 0l3-3m-3 3L9 8m-5 5h2.586a1 1 0 01.707.293l2.414 2.414a1 1 0 00.707.293h3.172a1 1 0 00.707-.293l2.414-2.414a1 1 0 01.707-.293H20" />
+              <svg
+                className="w-16 h-16 mb-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M8 4H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-2m-4-1v8m0 0l3-3m-3 3L9 8m-5 5h2.586a1 1 0 01.707.293l2.414 2.414a1 1 0 00.707.293h3.172a1 1 0 00.707-.293l2.414-2.414a1 1 0 01.707-.293H20"
+                />
               </svg>
-              <p className="text-xl">Select a supplier to view their products</p>
+              <p className="text-xl">
+                Select a supplier to view their products
+              </p>
             </div>
           )}
         </div>
@@ -162,4 +203,4 @@ const ProductList: React.FC = () => {
   );
 };
 
-export default ProductList; 
+export default ProductList;

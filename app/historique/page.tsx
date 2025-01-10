@@ -15,8 +15,10 @@ export default function History() {
 
   // States for adjustments
   const [adjustments, setAdjustments] = useState<Adjustment[]>([]);
-  const [filteredAdjustments, setFilteredAdjustments] = useState<Adjustment[]>([]);
-  const [activeTab, setActiveTab] = useState('sales');
+  const [filteredAdjustments, setFilteredAdjustments] = useState<Adjustment[]>(
+    [],
+  );
+  const [activeTab, setActiveTab] = useState("sales");
 
   // Fetch initial data
   useEffect(() => {
@@ -34,9 +36,12 @@ export default function History() {
 
         for (const invoice of response.data) {
           for (const line of invoice.invoiceLines) {
-            const productResponse = await axios.get(`http://localhost:3001/products/${line.product_id}`);
+            const productResponse = await axios.get(
+              `http://localhost:3001/products/${line.product_id}`,
+            );
             if (productResponse.status === 200) {
               transformedRows.push({
+                productid: line.product_id,
                 code: invoice.invoice_cus_id.toString(),
                 product: productResponse.data.product_name,
                 quantity: line.invoice_cus_line_quantity,
@@ -50,7 +55,7 @@ export default function History() {
         setRows(transformedRows);
         setFilteredRows(transformedRows);
       }
-    } catch (e) {
+    } catch (e: any) {
       console.error("Error fetching history:", e.message);
     }
   };
@@ -63,7 +68,7 @@ export default function History() {
         setAdjustments(response.data);
         setFilteredAdjustments(response.data);
       }
-    } catch (e) {
+    } catch (e: any) {
       console.error("Error fetching adjustments:", e.message);
     }
   };
@@ -71,18 +76,20 @@ export default function History() {
   // Handle search for both tabs
   const handleSearch = (query: string) => {
     setSearchQuery(query);
-    if (activeTab === 'sales') {
+    if (activeTab === "sales") {
       const filtered = rows.filter(
         (row) =>
           row.product.toLowerCase().includes(query.toLowerCase()) ||
-          row.timestamp.split("T")[0].includes(query)
+          row.timestamp.split("T")[0].includes(query),
       );
       setFilteredRows(query ? filtered : rows);
     } else {
       const filtered = adjustments.filter(
         (adj) =>
-          adj.Product?.product_name.toLowerCase().includes(query.toLowerCase()) ||
-          adj.adjustment_timestamp.split("T")[0].includes(query)
+          adj.Product?.product_name
+            .toLowerCase()
+            .includes(query.toLowerCase()) ||
+          adj.adjustment_timestamp.split("T")[0].includes(query),
       );
       setFilteredAdjustments(query ? filtered : adjustments);
     }
@@ -97,7 +104,7 @@ export default function History() {
     const oneMonthAgo = new Date();
     oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
 
-    if (activeTab === 'sales') {
+    if (activeTab === "sales") {
       let filtered = [...rows];
       if (filter === "today") {
         filtered = rows.filter((row) => row.timestamp.split("T")[0] === today);
@@ -110,22 +117,31 @@ export default function History() {
     } else {
       let filtered = [...adjustments];
       if (filter === "today") {
-        filtered = adjustments.filter((adj) => adj.adjustment_timestamp.split("T")[0] === today);
+        filtered = adjustments.filter(
+          (adj) => adj.adjustment_timestamp.split("T")[0] === today,
+        );
       } else if (filter === "thisWeek") {
-        filtered = adjustments.filter((adj) => new Date(adj.adjustment_timestamp) >= oneWeekAgo);
+        filtered = adjustments.filter(
+          (adj) => new Date(adj.adjustment_timestamp) >= oneWeekAgo,
+        );
       } else if (filter === "thisMonth") {
-        filtered = adjustments.filter((adj) => new Date(adj.adjustment_timestamp) >= oneMonthAgo);
+        filtered = adjustments.filter(
+          (adj) => new Date(adj.adjustment_timestamp) >= oneMonthAgo,
+        );
       }
       setFilteredAdjustments(filtered);
     }
   };
 
-  const groupedRows = filteredRows.reduce((acc, row) => {
-    const date = row.timestamp.split("T")[0];
-    if (!acc[date]) acc[date] = [];
-    acc[date].push(row);
-    return acc;
-  }, {} as Record<string, ProductRow[]>);
+  const groupedRows = filteredRows.reduce(
+    (acc, row) => {
+      const date = row.timestamp.split("T")[0];
+      if (!acc[date]) acc[date] = [];
+      acc[date].push(row);
+      return acc;
+    },
+    {} as Record<string, ProductRow[]>,
+  );
 
   return (
     <div className="flex">
@@ -133,21 +149,21 @@ export default function History() {
       <div className="flex flex-col w-full  mt-10">
         <div className="flex border-b border-gray-200 mb-4 ml-64">
           <button
-            onClick={() => setActiveTab('sales')}
+            onClick={() => setActiveTab("sales")}
             className={`px-4 py-2 ${
-              activeTab === 'sales'
-                ? 'border-b-2 border-[#BEE7DB] text-[#2C5282]'
-                : 'text-gray-500'
+              activeTab === "sales"
+                ? "border-b-2 border-[#BEE7DB] text-[#2C5282]"
+                : "text-gray-500"
             }`}
           >
             Sales History
           </button>
           <button
-            onClick={() => setActiveTab('adjustments')}
+            onClick={() => setActiveTab("adjustments")}
             className={`px-4 py-2 ${
-              activeTab === 'adjustments'
-                ? 'border-b-2 border-[#BEE7DB] text-[#2C5282]'
-                : 'text-gray-500'
+              activeTab === "adjustments"
+                ? "border-b-2 border-[#BEE7DB] text-[#2C5282]"
+                : "text-gray-500"
             }`}
           >
             Stock Adjustments
@@ -159,7 +175,11 @@ export default function History() {
           <MybuttonSearch
             textValue={searchQuery}
             buttonText="Rechercher"
-            placeholderText={activeTab === 'sales' ? "Nom du produit ou date" : "Nom du produit ou date d'ajustement"}
+            placeholderText={
+              activeTab === "sales"
+                ? "Nom du produit ou date"
+                : "Nom du produit ou date d'ajustement"
+            }
             onButtonClick={(value) => handleSearch(value)}
             Downkey="Enter"
           />
@@ -167,73 +187,118 @@ export default function History() {
         </div>
 
         {/* Content */}
-        {activeTab === 'sales' ? (
+        {activeTab === "sales" ? (
           // Sales History Table
           <div className="p-4 pl-52">
             <div className="bg-[#BEE7DB] flex rounded-2xl pt-2 pb-2 pl-3 pr-3 mb-7">
-              <div className="basis-1/5 flex align-middle justify-center font-bold">Code</div>
-              <div className="basis-1/5 flex align-middle justify-center font-bold">Produit</div>
-              <div className="basis-1/5 flex align-middle justify-center font-bold">Quantité</div>
-              <div className="basis-1/5 flex align-middle justify-center font-bold">Prix Unitaire</div>
-              <div className="basis-1/5 flex align-middle justify-center font-bold">Prix Total</div>
-            </div>
-            {Object.entries(groupedRows).slice().reverse().map(([date, dateRows]) => (
-              <div key={date} className="mb-8">
-                <h2 className="text-lg font-bold mb-2">{date}</h2>
-                <div className="bg-[#EBEBEB] rounded-2xl w-full mt-2 max-h-72 overflow-y-scroll">
-                  {dateRows.slice().reverse().map((row, index) => (
-                    <div key={index} className="text-center flex py-2">
-                      <div className="basis-1/5 flex align-middle justify-center">{row.code}</div>
-                      <div className="basis-1/5 flex align-middle justify-center">{row.product}</div>
-                      <div className="basis-1/5 flex align-middle justify-center">{row.quantity}</div>
-                      <div className="basis-1/5 flex align-middle justify-center">{row.unitPrice}</div>
-                      <div className="basis-1/5 flex align-middle justify-center">{row.quantity * row.unitPrice}</div>
-                    </div>
-                  ))}
-                </div>
+              <div className="basis-1/5 flex align-middle justify-center font-bold">
+                Code
               </div>
-            ))}
+              <div className="basis-1/5 flex align-middle justify-center font-bold">
+                Produit
+              </div>
+              <div className="basis-1/5 flex align-middle justify-center font-bold">
+                Quantité
+              </div>
+              <div className="basis-1/5 flex align-middle justify-center font-bold">
+                Prix Unitaire
+              </div>
+              <div className="basis-1/5 flex align-middle justify-center font-bold">
+                Prix Total
+              </div>
+            </div>
+            {Object.entries(groupedRows)
+              .slice()
+              .reverse()
+              .map(([date, dateRows]) => (
+                <div key={date} className="mb-8">
+                  <h2 className="text-lg font-bold mb-2">{date}</h2>
+                  <div className="bg-[#EBEBEB] rounded-2xl w-full mt-2 max-h-72 overflow-y-scroll">
+                    {dateRows
+                      .slice()
+                      .reverse()
+                      .map((row, index) => (
+                        <div key={index} className="text-center flex py-2">
+                          <div className="basis-1/5 flex align-middle justify-center">
+                            {row.code}
+                          </div>
+                          <div className="basis-1/5 flex align-middle justify-center">
+                            {row.product}
+                          </div>
+                          <div className="basis-1/5 flex align-middle justify-center">
+                            {row.quantity}
+                          </div>
+                          <div className="basis-1/5 flex align-middle justify-center">
+                            {row.unitPrice}
+                          </div>
+                          <div className="basis-1/5 flex align-middle justify-center">
+                            {row.quantity * row.unitPrice}
+                          </div>
+                        </div>
+                      ))}
+                  </div>
+                </div>
+              ))}
           </div>
         ) : (
           // Adjustments History Table
           <div className="p-4 pl-52">
             <div className="bg-[#BEE7DB] flex rounded-2xl pt-2 pb-2 pl-3 pr-3 mb-7">
-              <div className="basis-1/6 flex align-middle justify-center font-bold">Date</div>
-              <div className="basis-1/6 flex align-middle justify-center font-bold">Produit</div>
-              <div className="basis-1/6 flex align-middle justify-center font-bold">Ancienne Qté</div>
-              <div className="basis-1/6 flex align-middle justify-center font-bold">Nouvelle Qté</div>
-              <div className="basis-1/6 flex align-middle justify-center font-bold">Différence</div>
-              <div className="basis-1/6 flex align-middle justify-center font-bold">Raison</div>
+              <div className="basis-1/6 flex align-middle justify-center font-bold">
+                Date
+              </div>
+              <div className="basis-1/6 flex align-middle justify-center font-bold">
+                Produit
+              </div>
+              <div className="basis-1/6 flex align-middle justify-center font-bold">
+                Ancienne Qté
+              </div>
+              <div className="basis-1/6 flex align-middle justify-center font-bold">
+                Nouvelle Qté
+              </div>
+              <div className="basis-1/6 flex align-middle justify-center font-bold">
+                Différence
+              </div>
+              <div className="basis-1/6 flex align-middle justify-center font-bold">
+                Raison
+              </div>
             </div>
             <div className="bg-[#EBEBEB] rounded-2xl w-full mt-2 max-h-72 overflow-y-scroll">
-              {filteredAdjustments.slice().reverse().map((adjustment, index) => (
-                <div key={index} className="text-center flex py-2">
-                  <div className="basis-1/6 flex align-middle justify-center">
-                    {new Date(adjustment.adjustment_timestamp).toLocaleDateString()}
+              {filteredAdjustments
+                .slice()
+                .reverse()
+                .map((adjustment, index) => (
+                  <div key={index} className="text-center flex py-2">
+                    <div className="basis-1/6 flex align-middle justify-center">
+                      {new Date(
+                        adjustment.adjustment_timestamp,
+                      ).toLocaleDateString()}
+                    </div>
+                    <div className="basis-1/6 flex align-middle justify-center">
+                      {adjustment.Product?.product_name}
+                    </div>
+                    <div className="basis-1/6 flex align-middle justify-center">
+                      {adjustment.previous_quantity}
+                    </div>
+                    <div className="basis-1/6 flex align-middle justify-center">
+                      {adjustment.new_quantity}
+                    </div>
+                    <div className="basis-1/6 flex align-middle justify-center">
+                      <span
+                        className={`px-2 py-1 rounded-full ${
+                          adjustment.new_quantity > adjustment.previous_quantity
+                            ? "bg-green-100 text-green-800"
+                            : "bg-red-100 text-red-800"
+                        }`}
+                      >
+                        {adjustment.new_quantity - adjustment.previous_quantity}
+                      </span>
+                    </div>
+                    <div className="basis-1/6 flex align-middle justify-center">
+                      {adjustment.adjustment_reason}
+                    </div>
                   </div>
-                  <div className="basis-1/6 flex align-middle justify-center">
-                    {adjustment.Product?.product_name}
-                  </div>
-                  <div className="basis-1/6 flex align-middle justify-center">
-                    {adjustment.previous_quantity}
-                  </div>
-                  <div className="basis-1/6 flex align-middle justify-center">
-                    {adjustment.new_quantity}
-                  </div>
-                  <div className="basis-1/6 flex align-middle justify-center">
-                    <span className={`px-2 py-1 rounded-full ${
-                      adjustment.new_quantity > adjustment.previous_quantity
-                        ? 'bg-green-100 text-green-800'
-                        : 'bg-red-100 text-red-800'
-                    }`}>
-                      {adjustment.new_quantity - adjustment.previous_quantity}
-                    </span>
-                  </div>
-                  <div className="basis-1/6 flex align-middle justify-center">
-                    {adjustment.adjustment_reason}
-                  </div>
-                </div>
-              ))}
+                ))}
             </div>
           </div>
         )}

@@ -10,10 +10,11 @@ export interface ProductRow {
   product: string;
   quantity: number;
   unitPrice: number;
+  timestamp: string;
 }
 
-
 export interface Tab {
+  id: number | undefined;
   label: string;
   content: React.ReactNode;
 }
@@ -22,84 +23,91 @@ export interface TabsProps {
   tabs: Tab[];
 }
 
-
-
 export interface Product {
-    unitPrice: number; 
-    productCode: string;
-    productName: string; 
-    quantity: number; 
-  }
-  
+  unitPrice: number;
+  productCode: string;
+  productName: string;
+  quantity: number;
+}
 
 export interface DatedProductList {
-    date: string; 
-    products: Product[]; 
-  }
+  date: string;
+  products: Product[];
+}
 
 export interface Transaction {
-    date: string;
-    amountPaid: number;
-  }
+  id: number;
+  date: string;
+  amountPaid: number;
+}
 
-    // Define the structure for a fournisseur with dated product lists REMOVE WHEN DONE
-export  interface Fournisseur {
-      name: string; // Supplier name
-      datedProductLists: DatedProductList[]; // List of dated product lists for the supplier
-    }
+// Define the structure for a fournisseur with dated product lists REMOVE WHEN DONE
+export interface Fournisseur {
+  name: string; // Supplier name
+  datedProductLists: DatedProductList[]; // List of dated product lists for the supplier
+}
 
-export  interface FournisseurTrans {
-      Name: string;
-      transactions: Transaction[];
-    }
+export interface FournisseurTrans {
+  Name: string;
+  transactions: Transaction[];
+}
 
-    export  interface FournisseurType {
-      supplier_debt:number;
-      supplier_id:string;
-      supplier_name:string;
-      supplier_phone:string;
-    }
+export interface FournisseurType {
+  supplier_debt: number;
+  supplier_id: string;
+  supplier_name: string;
+  supplier_phone: string;
+}
 
-    export interface InvoiceLineFournisseur{
-      product_name: string,
-      product_barcode: string,
-      invoice_sup_line_quantity: number,
-      invoice_sup_line_price: number,
-      product_total:number,
-    }
+export interface InvoiceLineFournisseur {
+  product_name: string;
+  product_barcode: string;
+  invoice_sup_line_quantity: number;
+  invoice_sup_line_price: number;
+  product_total: number;
+}
 
-    export interface InvoiceFournisseur{
-      invoice_sup_timestamp: String
-      invoice_sup_total_amount: Number,
-      invoiceLines : InvoiceLineFournisseur[],
-    }
+export interface InvoiceFournisseur {
+  supplier_id: number;
+  invoice_sup_id: null | undefined;
+  invoice_sup_timestamp: String;
+  invoice_sup_total_amount: Number;
+  invoiceLines: InvoiceLineFournisseur[];
+}
 
-    export interface Adjustment {
-      adjustment_id: number;
-      user_id: number;
-      product_id: number;
-      product_variant_id?: number;
-      previous_quantity: number;
-      new_quantity: number;
-      adjustment_reason: string;
-      adjustment_timestamp: string;
-      Product?: {
-        product_name: string;
-      };
-      ProductVariant?: {
-        variant_barcode: string;
-      };
-    }
+export interface Adjustment {
+  adjustment_id: number;
+  user_id: number;
+  product_id: number;
+  product_variant_id?: number;
+  previous_quantity: number;
+  new_quantity: number;
+  adjustment_reason: string;
+  adjustment_timestamp: string;
+  Product?: {
+    product_name: string;
+  };
+  ProductVariant?: {
+    variant_barcode: string;
+  };
+}
 
-    export type LineObject = {
-      product_id: number;
-      product_variant_id: number | null;
-      invoice_cus_line_quantity: number;
-      invoice_cus_line_price: number;
-    };
-    
+export type LineObject = {
+  product_id: number;
+  product_variant_id: number | null;
+  invoice_cus_line_quantity: number;
+  invoice_cus_line_price: number;
+};
 
-    /*
+export type CahisherInter = {
+  user_name: string;
+  user_id: number;
+  
+};
+
+
+
+/*
 {
     "invoice_sup_id": 1,
     "supplier_id": 1,

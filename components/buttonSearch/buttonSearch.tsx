@@ -3,12 +3,12 @@ import React, { useState } from "react";
 interface ProductInputProps {
   buttonText: string;
   placeholderText: string;
-  Downkey:string;
-  textValue : string;
+  Downkey: string;
+  textValue: string;
   onButtonClick: (inputValue: string) => void;
-  DownKeySelect?:string;
-  handleKeySelect?:()=>void;
-  Ref?:React.RefObject<HTMLInputElement>;
+  DownKeySelect?: string;
+  handleKeySelect?: () => void;
+  Ref?: React.RefObject<HTMLInputElement>;
 }
 
 const ProductInput: React.FC<ProductInputProps> = ({
@@ -24,30 +24,27 @@ const ProductInput: React.FC<ProductInputProps> = ({
   const [inputValue, setInputValue] = useState("");
 
   const handleButtonClick = () => {
-    textValue = inputValue
+    textValue = inputValue;
     onButtonClick(textValue);
-    setInputValue(""); 
+    setInputValue("");
   };
 
-  const handleKeyDown = (e:React.KeyboardEvent<HTMLInputElement>) => {
-    console.log(" a key was pressed")
-    console.log(e.key)
-    console.log(Downkey)
-    if(e.key === Downkey){
-      console.log("hye")
-      textValue = inputValue
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    console.log(" a key was pressed");
+    console.log(e.key);
+    console.log(Downkey);
+    if (e.key === Downkey) {
+      console.log("hye");
+      textValue = inputValue;
       onButtonClick(textValue);
-      setInputValue(""); 
-    }
-    else if(e.key === DownKeySelect){
-      setInputValue(""); 
+      setInputValue("");
+    } else if (e.key === DownKeySelect) {
+      setInputValue("");
       console.log("yeah that function is being called");
-      if(handleKeySelect){
+      if (handleKeySelect) {
         handleKeySelect();
       }
     }
-
-
   };
 
   return (
@@ -56,12 +53,10 @@ const ProductInput: React.FC<ProductInputProps> = ({
         type="text"
         ref={Ref}
         value={inputValue}
-        onChange={(e) => 
-            setInputValue(e.target.value)
-        }
+        onChange={(e) => setInputValue(e.target.value)}
         placeholder={placeholderText}
         className="border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:bg-[#BEE7DB]"
-        onKeyDown={(e)=>handleKeyDown(e)}
+        onKeyDown={(e) => handleKeyDown(e)}
       />
       <button
         onClick={handleButtonClick}

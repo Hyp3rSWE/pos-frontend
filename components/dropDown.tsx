@@ -55,16 +55,17 @@ const Dropdown = ({ onSelect, selectedFilter }: DropdownProps) => {
             </button>
           </li>
           <li>
-            <button
-              className={`block w-full text-left px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 focus:bg-gray-100 ${
-                selectedFilter === "today" ? "bg-gray-100" : ""
-              }`}
-              onClick={() => {
-                onSelect("today");
-              }}
-            >
-              Aujourd'hui
-            </button>
+          <button
+  className={`block w-full text-left px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 focus:bg-gray-100 ${
+    selectedFilter === "today" ? "bg-gray-100" : ""
+  }`}
+  onClick={() => {
+    onSelect("today");
+  }}
+>
+  Aujourd&apos;hui  
+</button>
+
           </li>
           <li>
             <button
